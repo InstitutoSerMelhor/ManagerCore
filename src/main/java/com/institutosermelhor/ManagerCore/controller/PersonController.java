@@ -4,7 +4,9 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -26,11 +28,6 @@ public class PersonController {
     this.service = service;
   }
 
-  @GetMapping
-  public List<Person> getUsers() {
-    return service.getUsers();
-  }
-
   @PostMapping()
   public ResponseEntity<PersonDto> create(@RequestBody PersonCreationDto personData) {
     Person person = Person.builder().username(personData.username()).email(personData.email())
@@ -42,5 +39,16 @@ public class PersonController {
         new PersonDto(newPerson.getUsername(), newPerson.getEmail(), newPerson.getRole());
 
     return ResponseEntity.status(HttpStatus.CREATED).body(personDto);
+  }
+
+  @GetMapping
+  public List<Person> getUsers() {
+    return service.getUsers();
+  }
+
+  @DeleteMapping("{personId}")
+  public ResponseEntity<Void> delete(@PathVariable String personId) {
+    service.delete(personId);
+    return ResponseEntity.noContent().build();
   }
 }

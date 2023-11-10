@@ -29,13 +29,13 @@ public class Person {
 
   private Role role;
 
+  @Builder.Default
+  private boolean isDeleted = false;
+
   @CreatedDate
   private Date createdAt;
 
   @LastModifiedDate
   private Date updatedAt;
-
-  @Builder.Default
-  private boolean isDeleted = false;
 
 }
