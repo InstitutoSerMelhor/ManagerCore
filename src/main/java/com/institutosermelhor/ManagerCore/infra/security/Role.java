@@ -1,4 +1,4 @@
-package com.institutosermelhor.ManagerCore.security;
+package com.institutosermelhor.ManagerCore.infra.security;
 
 /**
  * Enum representing a Role.
