@@ -28,7 +28,7 @@ public class Person {
   private String password;
 
   private Role role;
-
+  
   @Builder.Default
   private boolean isDeleted = false;
 

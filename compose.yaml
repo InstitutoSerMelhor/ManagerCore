@@ -1,9 +1,17 @@
 services:
   mongodb:
     image: 'mongo:5'
+    container_name: manager_ism_db_container
+    networks:
+      - manager_ism_network
     environment:
-      - 'MONGO_INITDB_DATABASE=mydatabase'
+      - 'MONGO_INITDB_DATABASE=manager_ism_db'
       - 'MONGO_INITDB_ROOT_PASSWORD=secret'
       - 'MONGO_INITDB_ROOT_USERNAME=root'
     ports:
       - '27017'
+
+      
+networks:
+  manager_ism_network:
+    driver: bridge
