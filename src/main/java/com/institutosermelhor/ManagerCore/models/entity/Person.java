@@ -1,14 +1,20 @@
 package com.institutosermelhor.ManagerCore.models.entity;
 
-import com.institutosermelhor.ManagerCore.security.Role;
 import java.util.Date;
-import lombok.Data;
+import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
+import com.institutosermelhor.ManagerCore.infra.security.Role;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
 
 @Data
+@Builder
 @Document
+@AllArgsConstructor
 public class Person {
 
   @Id
@@ -22,20 +28,14 @@ public class Person {
   private String password;
 
   private Role role;
-
-  private Date createdAt;
-
-  private Date updatedAt;
-
+  
+  @Builder.Default
   private boolean isDeleted = false;
 
-  public Person(String username, String email, String password, Role role, Date createdAt,
-      Date updatedAt) {
-    this.username = username;
-    this.email = email;
-    this.password = password;
-    this.role = role;
-    this.createdAt = createdAt;
-    this.updatedAt = updatedAt;
-  }
+  @CreatedDate
+  private Date createdAt;
+
+  @LastModifiedDate
+  private Date updatedAt;
+
 }

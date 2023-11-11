@@ -1,4 +1,4 @@
-package com.institutosermelhor.ManagerCore.util;
+package com.institutosermelhor.ManagerCore.infra.security;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
