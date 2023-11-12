@@ -1,43 +1,33 @@
 package com.institutosermelhor.ManagerCore.models.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.PrePersist;
-import jakarta.persistence.PreUpdate;
 import java.util.Date;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 @Data
-@NoArgsConstructor
-@Entity
+@Builder
+@Document
+@AllArgsConstructor
 public class Project {
+
   @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
   private String id;
 
   private String name;
 
   private String description;
 
-  private boolean isDeleted = false;
-
-  @Column(name = "created_at", updatable=false)
+  @CreatedDate
   private Date createdAt;
 
-  @Column(name = "updated_at")
+  @LastModifiedDate
   private Date updatedAt;
 
-  @PrePersist
-  protected void onCreate() {
-    createdAt = new Date();
-  }
-
-  @PreUpdate
-  protected void onUpdate() {
-    updatedAt = new Date();
-  }
+  @Builder.Default
+  private boolean isEnabled = true;
 }
