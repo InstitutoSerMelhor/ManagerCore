@@ -1,30 +1,41 @@
 package com.institutosermelhor.ManagerCore.models.entity;
 
-import com.institutosermelhor.ManagerCore.security.Role;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import java.util.Date;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.mongodb.core.index.Indexed;
+import org.springframework.data.mongodb.core.mapping.Document;
+import com.institutosermelhor.ManagerCore.infra.security.Role;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 @Data
-@Entity
-@NoArgsConstructor
+@Builder
+@Document
+@AllArgsConstructor
 public class Person {
+
   @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
   private String id;
 
   private String username;
 
-  @Column(unique = true)
+  @Indexed(unique = true)
   private String email;
 
   private String password;
 
   private Role role;
-
+  
+  @Builder.Default
   private boolean isDeleted = false;
+
+  @CreatedDate
+  private Date createdAt;
+
+  @LastModifiedDate
+  private Date updatedAt;
+
 }
