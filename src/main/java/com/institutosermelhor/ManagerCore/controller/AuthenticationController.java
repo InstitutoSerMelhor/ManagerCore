@@ -40,10 +40,7 @@ public class AuthenticationController {
 
   @PostMapping("/register")
   public ResponseEntity<UserDto> create(@RequestBody UserCreationDto userData) {
-    User user = User.builder().username(userData.username()).email(userData.email())
-        .password(userData.password()).build();
-
-    User newPerson = userService.create(user);
+    User newPerson = userService.create(userData.toEntity());
 
     UserDto userDto =
         new UserDto(newPerson.getUsername(), newPerson.getEmail(), newPerson.getRole());
@@ -55,10 +52,7 @@ public class AuthenticationController {
   @SecurityRequirement(name = "bearerAuth")
   @PostMapping("/register/admin")
   public ResponseEntity<UserDto> createAdmin(@RequestBody UserCreationDto userData) {
-    User user = User.builder().username(userData.username()).email(userData.email())
-        .password(userData.password()).build();
-
-    User newPerson = userService.createAdmin(user);
+    User newPerson = userService.createAdmin(userData.toEntity());
 
     UserDto userDto =
         new UserDto(newPerson.getUsername(), newPerson.getEmail(), newPerson.getRole());
