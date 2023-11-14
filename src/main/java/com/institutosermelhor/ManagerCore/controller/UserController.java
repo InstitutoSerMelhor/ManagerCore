@@ -30,9 +30,19 @@ public class UserController {
   public ResponseEntity<List<UserDto>> getUsers() {
     List<User> users = service.getUsers();
     List<UserDto> usersDto = users.stream()
-        .map(user -> new UserDto(user.getUsername(), user.getEmail(), user.getRole())).toList();
+        .map(user -> new UserDto(user.getId(), user.getUsername(), user.getEmail(), user.getRole()))
+        .toList();
 
     return ResponseEntity.status(HttpStatus.OK).body(usersDto);
+  }
+
+  @GetMapping("/{id}")
+  public ResponseEntity<UserDto> getUser(@PathVariable String id) {
+    User user = service.findById(id);
+    UserDto userDto = new UserDto(user.getId(), user.getUsername(), user.getEmail(),
+        user.getRole());
+
+    return ResponseEntity.status(HttpStatus.OK).body(userDto);
   }
 
   @DeleteMapping("{userId}")

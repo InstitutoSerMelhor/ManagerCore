@@ -1,9 +1,12 @@
 package com.institutosermelhor.ManagerCore.models.entity;
 
+import java.util.Date;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Data
@@ -15,10 +18,16 @@ public class Report {
   @Id
   private String id;
 
-  private String name;
+  private String fileName;
 
-  private String type;
+  private long fileSize;
 
-  private byte[] data;
+  @Builder.Default
+  private boolean isEnabled = true;
 
+  @CreatedDate
+  private Date createdAt;
+
+  @LastModifiedDate
+  private Date updatedAt;
 }

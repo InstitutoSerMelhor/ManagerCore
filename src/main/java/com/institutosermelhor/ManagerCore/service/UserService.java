@@ -1,6 +1,6 @@
 package com.institutosermelhor.ManagerCore.service;
 
-import com.institutosermelhor.ManagerCore.infra.exception.AlreadyExistsException;
+import com.institutosermelhor.ManagerCore.infra.exception.ConflictException;
 import com.institutosermelhor.ManagerCore.infra.security.Role;
 import com.institutosermelhor.ManagerCore.models.entity.User;
 import com.institutosermelhor.ManagerCore.models.repository.UserRepository;
@@ -23,10 +23,10 @@ public class UserService implements UserDetailsService {
     this.repository = repository;
   }
 
-  public User create(User user) {
+  public User saveUser(User user) {
     UserDetails userDetails = this.loadUserByUsername(user.getEmail());
     if (userDetails != null) {
-      throw new AlreadyExistsException("Email already registered!");
+      throw new ConflictException("Email already registered!");
     }
 
     String hashedPassword = new BCryptPasswordEncoder().encode(user.getPassword());
@@ -35,10 +35,10 @@ public class UserService implements UserDetailsService {
     return repository.save(user);
   }
 
-  public User createAdmin(User user) {
+  public User saveAdmin(User user) {
     UserDetails userDetails = this.loadUserByUsername(user.getEmail());
     if (userDetails != null) {
-      throw new AlreadyExistsException("Email already registered!");
+      throw new ConflictException("Email already registered!");
     }
 
     String hashedPassword = new BCryptPasswordEncoder().encode(user.getPassword());
@@ -48,7 +48,7 @@ public class UserService implements UserDetailsService {
   }
 
   public List<User> getUsers() {
-    return repository.findAll();
+    return repository.findByIsEnabledTrue();
   }
 
   public User findById(String userId) {

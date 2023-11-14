@@ -15,8 +15,14 @@ public class ManagerException {
         .body(new ErrorBody(HttpStatus.NOT_FOUND.value(), ex.getMessage()));
   }
 
-  @ExceptionHandler(AlreadyExistsException.class)
-  public ResponseEntity<ErrorBody> handleAlreadyExists(AlreadyExistsException ex) {
+  @ExceptionHandler(ConflictException.class)
+  public ResponseEntity<ErrorBody> handleConflict(ConflictException ex) {
+    return ResponseEntity.status(HttpStatus.CONFLICT)
+        .body(new ErrorBody(HttpStatus.CONFLICT.value(), ex.getMessage()));
+  }
+
+  @ExceptionHandler(BadRequestException.class)
+  public ResponseEntity<ErrorBody> handleBadRequest(BadRequestException ex) {
     return ResponseEntity.status(HttpStatus.BAD_REQUEST)
         .body(new ErrorBody(HttpStatus.BAD_REQUEST.value(), ex.getMessage()));
   }
