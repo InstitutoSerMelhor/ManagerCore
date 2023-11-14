@@ -22,8 +22,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/auth")
-@Tag(name = "Auth")
+@RequestMapping()
+@Tag(name = "Authentication")
 public class AuthenticationController {
 
   private final AuthenticationManager authenticationManager;
@@ -39,11 +39,11 @@ public class AuthenticationController {
   }
 
   @PostMapping("/register")
-  public ResponseEntity<UserDto> create(@RequestBody UserCreationDto userData) {
-    User newPerson = userService.create(userData.toEntity());
+  public ResponseEntity<UserDto> saveUser(@RequestBody UserCreationDto userData) {
+    User newUser = userService.saveUser(userData.toEntity());
 
     UserDto userDto =
-        new UserDto(newPerson.getUsername(), newPerson.getEmail(), newPerson.getRole());
+        new UserDto(newUser.getId(), newUser.getUsername(), newUser.getEmail(), newUser.getRole());
 
     return ResponseEntity.status(HttpStatus.CREATED).body(userDto);
   }
@@ -51,11 +51,11 @@ public class AuthenticationController {
   @Secured("ADMIN")
   @SecurityRequirement(name = "bearerAuth")
   @PostMapping("/register/admin")
-  public ResponseEntity<UserDto> createAdmin(@RequestBody UserCreationDto userData) {
-    User newPerson = userService.createAdmin(userData.toEntity());
+  public ResponseEntity<UserDto> saveAdmin(@RequestBody UserCreationDto userData) {
+    User newUser = userService.saveAdmin(userData.toEntity());
 
     UserDto userDto =
-        new UserDto(newPerson.getUsername(), newPerson.getEmail(), newPerson.getRole());
+        new UserDto(newUser.getId(), newUser.getUsername(), newUser.getEmail(), newUser.getRole());
 
     return ResponseEntity.status(HttpStatus.CREATED).body(userDto);
   }
