@@ -1,13 +1,5 @@
 package com.institutosermelhor.ManagerCore.controller;
 
-import com.institutosermelhor.ManagerCore.controller.Dtos.AuthenticationDto;
-import com.institutosermelhor.ManagerCore.controller.Dtos.UserCreationDto;
-import com.institutosermelhor.ManagerCore.controller.Dtos.UserDto;
-import com.institutosermelhor.ManagerCore.models.entity.User;
-import com.institutosermelhor.ManagerCore.service.TokenService;
-import com.institutosermelhor.ManagerCore.service.UserService;
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -20,6 +12,14 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import com.institutosermelhor.ManagerCore.controller.Dtos.AuthenticationDto;
+import com.institutosermelhor.ManagerCore.controller.Dtos.UserCreationDto;
+import com.institutosermelhor.ManagerCore.controller.Dtos.UserDto;
+import com.institutosermelhor.ManagerCore.models.entity.User;
+import com.institutosermelhor.ManagerCore.service.TokenService;
+import com.institutosermelhor.ManagerCore.service.UserService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController
 @RequestMapping()
@@ -63,12 +63,14 @@ public class AuthenticationController {
   @PostMapping("/login")
   public ResponseEntity<Map<String, String>> login(
       @RequestBody AuthenticationDto authenticationDTO) {
-    UsernamePasswordAuthenticationToken usernamePassword =
-        new UsernamePasswordAuthenticationToken(authenticationDTO.email(),
-            authenticationDTO.password());
+    System.out.println(userService.getUsers());
+    System.out.println(authenticationDTO.email() + authenticationDTO.password());
+    UsernamePasswordAuthenticationToken usernamePassword = new UsernamePasswordAuthenticationToken(
+        authenticationDTO.email(), authenticationDTO.password());
     Authentication auth = authenticationManager.authenticate(usernamePassword);
     User user = (User) auth.getPrincipal();
     String token = tokenService.generateToken(user);
+
 
     return ResponseEntity.status(HttpStatus.OK).body(Map.of("token", token));
   }
