@@ -13,7 +13,8 @@ public class TestManagerCoreApplication {
 	@Bean
 	@ServiceConnection
 	MongoDBContainer mongoDbContainer() {
-		return new MongoDBContainer(DockerImageName.parse("mongo:latest"));
+		return new MongoDBContainer(DockerImageName.parse("mongo:latest"))
+				.withExposedPorts(27017);
 	}
 
 	public static void main(String[] args) {
