@@ -2,11 +2,13 @@ package com.institutosermelhor.ManagerCore.service;
 
 import com.institutosermelhor.ManagerCore.controller.Dtos.ReportDownloadDto;
 import com.institutosermelhor.ManagerCore.controller.Dtos.ReportDto;
+import com.institutosermelhor.ManagerCore.controller.Dtos.ReportUpdateDto;
 import com.institutosermelhor.ManagerCore.infra.exception.BadRequestException;
 import com.institutosermelhor.ManagerCore.infra.exception.ConflictException;
 import com.institutosermelhor.ManagerCore.infra.exception.NotFoundException;
 import com.institutosermelhor.ManagerCore.models.entity.Report;
 import com.institutosermelhor.ManagerCore.models.repository.ReportRepository;
+import com.institutosermelhor.ManagerCore.util.ReportType;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 import com.mongodb.client.gridfs.model.GridFSFile;
@@ -40,12 +42,13 @@ public class ReportService {
     this.repository = repository;
   }
 
-  public String saveFile(MultipartFile file) throws IOException {
+  public String saveFile(String name, ReportType reportType, MultipartFile file)
+      throws IOException {
     if (!Objects.equals(file.getContentType(), "application/pdf")) {
       throw new BadRequestException("File type not supported");
     }
 
-    if (repository.findByFileName(file.getOriginalFilename()) != null) {
+    if (repository.findByName(name) != null) {
       throw new ConflictException("File name already exists");
     }
 
@@ -54,9 +57,8 @@ public class ReportService {
 
     Object fileID = gridFsTemplate.store(file.getInputStream(), file.getOriginalFilename(),
         file.getContentType(), metadata);
-
-    Report report = Report.builder().id(fileID.toString()).fileName(file.getOriginalFilename())
-        .fileSize(file.getSize()).build();
+    Report report = Report.builder().id(fileID.toString()).name(name).reportType(reportType)
+        .build();
     repository.save(report);
 
     return fileID.toString();
@@ -79,14 +81,26 @@ public class ReportService {
         IOUtils.toByteArray(gridFsOperations.getResource(gridFSFile).getInputStream()));
   }
 
-  public List<Report> getFiles() {
+  public List<Report> getReports() {
     return repository.findByIsEnabledTrue();
   }
 
-  public void deleteFile(String id) {
+  public List<Report> getReportByType(ReportType reportType) {
+    return repository.findByReportType(reportType);
+  }
+
+  public void delete(String id) {
     Report report = repository.findById(id)
         .orElseThrow(() -> new NotFoundException("File not found"));
     report.setEnabled(false);
     repository.save(report);
+  }
+
+  public void update(String id, ReportUpdateDto report) {
+    Report reportToUpdate = repository.findById(id)
+        .orElseThrow(() -> new NotFoundException("File not found"));
+    reportToUpdate.setName(report.name());
+    reportToUpdate.setReportType(report.reportType());
+    repository.save(reportToUpdate);
   }
 }
