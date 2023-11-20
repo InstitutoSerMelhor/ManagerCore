@@ -8,23 +8,25 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 import com.institutosermelhor.ManagerCore.infra.security.Role;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
+import lombok.NoArgsConstructor;
 
 @Data
 @Builder
 @Document
 @AllArgsConstructor
+@NoArgsConstructor
 public class User implements UserDetails, GrantedAuthority {
 
   @Id
   private String id;
 
-  private String username;
+  private String name;
 
   @Indexed(unique = true)
   private String email;

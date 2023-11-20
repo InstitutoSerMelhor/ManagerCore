@@ -24,7 +24,7 @@
   <summary><strong> Rodando testes </strong></summary>
   <br/>
   
-  - Rodando Testes Unitários(você deve estar na pasta raiz) - `mvn test`.
+  - Rodando testes(você deve estar na pasta raiz) - `mvn test`.
 
 </details>
 
