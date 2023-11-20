@@ -37,6 +37,7 @@ public class UserService implements UserDetailsService {
 
   public User saveAdmin(User user) {
     UserDetails userDetails = this.loadUserByUsername(user.getEmail());
+
     if (userDetails != null) {
       throw new ConflictException("Email already registered!");
     }

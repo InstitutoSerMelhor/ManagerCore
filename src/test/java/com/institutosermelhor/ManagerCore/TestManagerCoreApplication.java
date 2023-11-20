@@ -9,13 +9,6 @@ import org.testcontainers.utility.DockerImageName;
 @TestConfiguration(proxyBeanMethods = false)
 public class TestManagerCoreApplication {
 
-//	@Bean
-//	@ServiceConnection
-//	MongoDBContainer mongoDbContainer() {
-//		return new MongoDBContainer(DockerImageName.parse("mongo:latest"))
-//				.withExposedPorts(27017);
-//	}
-
 	public static void main(String[] args) {
 		SpringApplication.from(ManagerCoreApplication::main).with(TestManagerCoreApplication.class).run(args);
 	}

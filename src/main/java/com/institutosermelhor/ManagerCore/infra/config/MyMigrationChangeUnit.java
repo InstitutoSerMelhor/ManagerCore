@@ -34,11 +34,19 @@ public class MyMigrationChangeUnit {
 
   @Execution
   public void migrationMethod() {
-//    String passwordHashed = new BCryptPasswordEncoder().encode("123456");
-//
-//    template.save(
-//        new User(null, "Abner", "abn@gmail.com", passwordHashed, Role.ADMIN, true, null, null),
-//        USER_COLLECTION_NAME);
+    String passwordHashed = new BCryptPasswordEncoder().encode("odeSaiDoMeuSofa");
+
+    template.save(
+            new User(
+                    null,
+                    "Garfield",
+                    "lasanha@gmail.com",
+                    passwordHashed,
+                    Role.ADMIN,
+                    true,
+                    null,
+                    null),
+        USER_COLLECTION_NAME);
   }
 
   @RollbackExecution

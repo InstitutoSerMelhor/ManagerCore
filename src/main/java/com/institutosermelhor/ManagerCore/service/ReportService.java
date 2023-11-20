@@ -23,11 +23,8 @@ import com.mongodb.client.gridfs.model.GridFSFile;
 
 @Service
 public class ReportService {
-
   private final GridFsTemplate gridFsTemplate;
-
   private final GridFsOperations gridFsOperations;
-
   private final ReportRepository repository;
 
   @Autowired
@@ -39,12 +36,10 @@ public class ReportService {
   }
 
   public String saveFile(MultipartFile file) throws IOException {
-    if (!Objects.equals(file.getContentType(), "application/pdf")) {
-      throw new BadRequestException("File type not supported");
-    }
+    checkFileFormat(file);
 
     if (repository.findByFileName(file.getOriginalFilename()) != null) {
-      throw new ConflictException("File name already exists");
+      throw new ConflictException("File name already exists!");
     }
 
     DBObject metadata = new BasicDBObject();
@@ -61,12 +56,9 @@ public class ReportService {
   }
 
   public String updateFile(MultipartFile file) throws IOException {
-    if (!Objects.equals(file.getContentType(), "application/pdf")) {
-      throw new BadRequestException("File type not supported");
-    }
+    checkFileFormat(file);
 
     Report reportSearched = repository.findByFileName(file.getOriginalFilename());
-
 
     DBObject metadata = new BasicDBObject();
     metadata.put("fileSize", file.getSize());
@@ -90,7 +82,7 @@ public class ReportService {
 
   public ReportDownloadDto getFileById(String id) throws IOException {
     Report report =
-        repository.findById(id).orElseThrow(() -> new NotFoundException("File not found"));
+        repository.findById(id).orElseThrow(() -> new NotFoundException("File not found!"));
 
     GridFSFile gridFSFile = gridFsTemplate.findOne(new Query(Criteria.where("_id").is(id)));
 
@@ -110,8 +102,14 @@ public class ReportService {
 
   public void deleteFile(String id) {
     Report report =
-        repository.findById(id).orElseThrow(() -> new NotFoundException("File not found"));
+        repository.findById(id).orElseThrow(() -> new NotFoundException("File not found!"));
     report.setEnabled(false);
     repository.save(report);
+  }
+
+  public void checkFileFormat(MultipartFile file) {
+    if (!Objects.equals(file.getContentType(), "application/pdf")) {
+      throw new BadRequestException("File type not supported");
+    }
   }
 }

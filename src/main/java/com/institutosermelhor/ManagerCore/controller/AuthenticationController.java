@@ -63,11 +63,10 @@ public class AuthenticationController {
   @PostMapping("/login")
   public ResponseEntity<Map<String, String>> login(
       @RequestBody AuthenticationDto authenticationDTO) {
-    System.out.println(userService.getUsers());
-    System.out.println(authenticationDTO.email() + authenticationDTO.password());
     UsernamePasswordAuthenticationToken usernamePassword = new UsernamePasswordAuthenticationToken(
         authenticationDTO.email(), authenticationDTO.password());
     Authentication auth = authenticationManager.authenticate(usernamePassword);
+
     User user = (User) auth.getPrincipal();
     String token = tokenService.generateToken(user);
 
