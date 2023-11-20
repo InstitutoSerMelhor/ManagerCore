@@ -46,11 +46,11 @@ public class ProjectService {
     repository.save(project);
   }
 
-  public void update(Project project) {
-    Project projectUpdated = this.findById(project.getId());
-    projectUpdated.setName(project.getName());
-    projectUpdated.setDescription(projectUpdated.getDescription());
-    projectUpdated.setArea(project.getArea());
-    repository.save(projectUpdated);
+  public void update(String id, Project project) {
+    Project projectToUpdate = this.findById(id);
+    projectToUpdate.setName(project.getName());
+    projectToUpdate.setDescription(project.getDescription());
+    projectToUpdate.setArea(project.getArea());
+    repository.save(projectToUpdate);
   }
 }
