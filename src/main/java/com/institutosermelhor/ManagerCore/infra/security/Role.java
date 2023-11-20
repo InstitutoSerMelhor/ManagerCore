@@ -1,8 +1,11 @@
 package com.institutosermelhor.ManagerCore.infra.security;
 
+import lombok.Getter;
+
 /**
  * Enum representing a Role.
  */
+@Getter
 public enum Role {
   ADMIN("ADMIN"),
   USER("USER");
@@ -13,7 +16,4 @@ public enum Role {
     this.name = name;
   }
 
-  public String getName() {
-    return name;
-  }
 }

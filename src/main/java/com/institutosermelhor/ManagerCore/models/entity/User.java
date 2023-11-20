@@ -24,7 +24,7 @@ public class User implements UserDetails, GrantedAuthority {
   @Id
   private String id;
 
-  private String username;
+  private String name;
 
   @Indexed(unique = true)
   private String email;

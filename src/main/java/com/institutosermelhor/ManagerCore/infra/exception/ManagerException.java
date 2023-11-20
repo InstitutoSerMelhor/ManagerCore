@@ -27,6 +27,12 @@ public class ManagerException {
         .body(new ErrorBody(HttpStatus.BAD_REQUEST.value(), ex.getMessage()));
   }
 
+  @ExceptionHandler(UnauthorizedException.class)
+  public ResponseEntity<ErrorBody> handleUnauthorized(UnauthorizedException ex) {
+    return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+        .body(new ErrorBody(HttpStatus.UNAUTHORIZED.value(), ex.getMessage()));
+  }
+
   @ExceptionHandler(RuntimeException.class)
   public ResponseEntity<ErrorBody> handleRuntimeException(RuntimeException ex) {
     return ResponseEntity.status(HttpStatus.BAD_REQUEST)

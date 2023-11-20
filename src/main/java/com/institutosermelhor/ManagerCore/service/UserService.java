@@ -1,10 +1,12 @@
 package com.institutosermelhor.ManagerCore.service;
 
 import com.institutosermelhor.ManagerCore.infra.exception.ConflictException;
+import com.institutosermelhor.ManagerCore.infra.exception.UnauthorizedException;
 import com.institutosermelhor.ManagerCore.infra.security.Role;
 import com.institutosermelhor.ManagerCore.models.entity.User;
 import com.institutosermelhor.ManagerCore.models.repository.UserRepository;
 import java.util.List;
+import java.util.Objects;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -55,8 +57,20 @@ public class UserService implements UserDetailsService {
     return repository.findById(userId).orElseThrow(() -> new NotFoundException("User not found!"));
   }
 
+  public void update(User user, String userEmail) {
+    User userToUpdate = this.findById(user.getId());
+    if (!Objects.equals(userToUpdate.getEmail(), userEmail)) {
+      throw new UnauthorizedException();
+    }
+    
+    userToUpdate.setName(user.getUsername());
+    userToUpdate.setEmail(user.getEmail());
+    userToUpdate.setPassword(user.getPassword());
+    repository.save(userToUpdate);
+  }
+
   public void delete(String userId) {
-    User user = findById(userId);
+    User user = this.findById(userId);
     user.setEnabled(false);
     repository.save(user);
   }
