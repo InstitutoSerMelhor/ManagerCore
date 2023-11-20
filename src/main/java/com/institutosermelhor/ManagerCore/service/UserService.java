@@ -57,12 +57,12 @@ public class UserService implements UserDetailsService {
     return repository.findById(userId).orElseThrow(() -> new NotFoundException("User not found!"));
   }
 
-  public void update(User user, String userEmail) {
-    User userToUpdate = this.findById(user.getId());
+  public void update(String userId, User user, String userEmail) {
+    User userToUpdate = this.findById(userId);
     if (!Objects.equals(userToUpdate.getEmail(), userEmail)) {
       throw new UnauthorizedException();
     }
-    
+
     userToUpdate.setName(user.getUsername());
     userToUpdate.setEmail(user.getEmail());
     userToUpdate.setPassword(user.getPassword());

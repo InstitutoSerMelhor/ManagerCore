@@ -1,5 +1,6 @@
 package com.institutosermelhor.ManagerCore.controller;
 
+import com.institutosermelhor.ManagerCore.controller.Dtos.UserCreationDto;
 import com.institutosermelhor.ManagerCore.controller.Dtos.UserDto;
 import com.institutosermelhor.ManagerCore.controller.Dtos.UserRequestDto;
 import com.institutosermelhor.ManagerCore.models.entity.User;
@@ -58,11 +59,12 @@ public class UserController {
     return ResponseEntity.noContent().build();
   }
 
-  @PutMapping()
-  public ResponseEntity<UserDto> update(@RequestBody UserRequestDto userData) {
+  @PutMapping("{userId}")
+  public ResponseEntity<UserDto> update(@PathVariable String userId,
+      @RequestBody UserCreationDto userData) {
     Authentication auth = SecurityContextHolder.getContext().getAuthentication();
     User user = (User) auth.getPrincipal();
-    service.update(userData.toEntity(), user.getEmail());
+    service.update(userId, userData.toEntity(), user.getEmail());
     return ResponseEntity.noContent().build();
   }
 }
