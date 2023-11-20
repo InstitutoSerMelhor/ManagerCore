@@ -58,8 +58,11 @@ public class ReportService {
   public String updateFile(MultipartFile file) throws IOException {
     checkFileFormat(file);
 
-    Report reportSearched = repository.findByFileName(file.getOriginalFilename());
+    if (!Objects.equals(file.getContentType(), "application/pdf")) {
+      throw new BadRequestException("File type not supported");
+    }
 
+    Report reportSearched = repository.findByFileName(file.getOriginalFilename());
     DBObject metadata = new BasicDBObject();
     metadata.put("fileSize", file.getSize());
 

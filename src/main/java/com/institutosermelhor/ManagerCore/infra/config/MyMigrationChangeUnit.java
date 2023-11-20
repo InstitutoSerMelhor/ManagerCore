@@ -11,8 +11,7 @@ import io.mongock.api.annotations.Execution;
 import io.mongock.api.annotations.RollbackBeforeExecution;
 import io.mongock.api.annotations.RollbackExecution;
 
-@ChangeUnit(id = "myMigrationChangeUnitId", order = "1", author = "Abner",
-    systemVersion = "1")
+@ChangeUnit(id = "myMigrationChangeUnitId", order = "1", author = "Abner", systemVersion = "1")
 public class MyMigrationChangeUnit {
   private final MongoTemplate template;
 
@@ -46,7 +45,7 @@ public class MyMigrationChangeUnit {
                     true,
                     null,
                     null),
-        USER_COLLECTION_NAME);
+            USER_COLLECTION_NAME);
   }
 
   @RollbackExecution
