@@ -22,6 +22,8 @@ public class Project {
 
   private String description;
 
+  private String area;
+
   @CreatedDate
   private Date createdAt;
 
