@@ -11,8 +11,7 @@ import io.mongock.api.annotations.Execution;
 import io.mongock.api.annotations.RollbackBeforeExecution;
 import io.mongock.api.annotations.RollbackExecution;
 
-@ChangeUnit(id = "myMigrationChangeUnitId", order = "1", author = "mongock_test",
-    systemVersion = "1")
+@ChangeUnit(id = "myMigrationChangeUnitId", order = "1", author = "Abner", systemVersion = "1")
 public class MyMigrationChangeUnit {
   private final MongoTemplate template;
 
@@ -34,11 +33,19 @@ public class MyMigrationChangeUnit {
 
   @Execution
   public void migrationMethod() {
-    String passwordHashed = new BCryptPasswordEncoder().encode("123456");
+    String passwordHashed = new BCryptPasswordEncoder().encode("odeSaiDoMeuSofa");
 
     template.save(
-        new User(null, "Abner", "abn@gmail.com", passwordHashed, Role.ADMIN, true, null, null),
-        USER_COLLECTION_NAME);
+            new User(
+                    null,
+                    "Garfield",
+                    "lasanha@gmail.com",
+                    passwordHashed,
+                    Role.ADMIN,
+                    true,
+                    null,
+                    null),
+            USER_COLLECTION_NAME);
   }
 
   @RollbackExecution

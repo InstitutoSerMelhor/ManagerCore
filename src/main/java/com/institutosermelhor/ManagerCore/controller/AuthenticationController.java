@@ -55,7 +55,7 @@ public class AuthenticationController {
     User newUser = userService.saveAdmin(userData.toEntity());
 
     UserDto userDto =
-        new UserDto(newUser.getId(), newUser.getUsername(), newUser.getEmail(), newUser.getRole());
+        new UserDto(newUser.getId(), newUser.getName(), newUser.getEmail(), newUser.getRole());
 
     return ResponseEntity.status(HttpStatus.CREATED).body(userDto);
   }
@@ -63,11 +63,10 @@ public class AuthenticationController {
   @PostMapping("/login")
   public ResponseEntity<Map<String, String>> login(
       @RequestBody AuthenticationDto authenticationDTO) {
-    System.out.println(userService.getUsers());
-    System.out.println(authenticationDTO.email() + authenticationDTO.password());
     UsernamePasswordAuthenticationToken usernamePassword = new UsernamePasswordAuthenticationToken(
         authenticationDTO.email(), authenticationDTO.password());
     Authentication auth = authenticationManager.authenticate(usernamePassword);
+
     User user = (User) auth.getPrincipal();
     String token = tokenService.generateToken(user);
 

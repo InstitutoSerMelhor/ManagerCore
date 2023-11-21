@@ -78,11 +78,6 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-testcontainers</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
       <groupId>org.springframework.restdocs</groupId>
       <artifactId>spring-restdocs-mockmvc</artifactId>
       <scope>test</scope>
@@ -103,17 +98,16 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-    <groupId>io.mongock</groupId>
-    <artifactId>mongock-springboot-v3</artifactId>
-    <version>5.3.4</version>
-</dependency>
-<dependency>
-    <groupId>io.mongock</groupId>
-    <artifactId>mongodb-springdata-v4-driver</artifactId>
-    <version>5.3.4</version>
-</dependency>
+      <groupId>io.mongock</groupId>
+      <artifactId>mongock-springboot-v3</artifactId>
+      <version>5.3.4</version>
+    </dependency>
+    <dependency>
+        <groupId>io.mongock</groupId>
+        <artifactId>mongodb-springdata-v4-driver</artifactId>
+        <version>5.3.4</version>
+    </dependency>
   </dependencies>
-
 
   <build>
     <plugins>
