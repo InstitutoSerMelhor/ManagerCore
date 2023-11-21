@@ -22,7 +22,7 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController
-@RequestMapping()
+@RequestMapping
 @Tag(name = "Authentication")
 public class AuthenticationController {
 
