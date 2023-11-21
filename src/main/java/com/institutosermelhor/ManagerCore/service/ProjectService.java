@@ -1,16 +1,12 @@
 package com.institutosermelhor.ManagerCore.service;
 
-import com.institutosermelhor.ManagerCore.infra.exception.ConflictException;
-import com.institutosermelhor.ManagerCore.infra.exception.NotFoundException;
-import com.institutosermelhor.ManagerCore.infra.security.Role;
-import com.institutosermelhor.ManagerCore.models.entity.Project;
-import com.institutosermelhor.ManagerCore.models.entity.User;
-import com.institutosermelhor.ManagerCore.models.repository.ProjectRepository;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import com.institutosermelhor.ManagerCore.infra.exception.ConflictException;
+import com.institutosermelhor.ManagerCore.infra.exception.NotFoundException;
+import com.institutosermelhor.ManagerCore.models.entity.Project;
+import com.institutosermelhor.ManagerCore.models.repository.ProjectRepository;
 
 @Service
 public class ProjectService {
@@ -38,6 +34,15 @@ public class ProjectService {
   public Project findById(String projectId) {
     return repository.findById(projectId)
         .orElseThrow(() -> new NotFoundException("Project not found!"));
+  }
+
+  public Project updateProject(Project projectToUpdate) {
+    Project project = repository.findByName(projectToUpdate.getName());
+
+    project.setDescription(projectToUpdate.getDescription());
+    project.setName(projectToUpdate.getName());
+
+    return repository.save(project);
   }
 
   public void deleteProject(String projectId) {
