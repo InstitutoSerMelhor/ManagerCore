@@ -98,14 +98,10 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>io.mongock</groupId>
-      <artifactId>mongock-springboot-v3</artifactId>
-      <version>5.3.4</version>
-    </dependency>
-    <dependency>
-        <groupId>io.mongock</groupId>
-        <artifactId>mongodb-springdata-v4-driver</artifactId>
-        <version>5.3.4</version>
+      <groupId>org.assertj</groupId>
+      <artifactId>assertj-core</artifactId>
+      <version>3.11.1</version>
+      <scope>test</scope>
     </dependency>
   </dependencies>
 
@@ -147,6 +143,25 @@
             </exclude>
           </excludes>
         </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.jacoco</groupId>
+        <artifactId>jacoco-maven-plugin</artifactId>
+        <version>0.8.11</version>
+        <executions>
+          <execution>
+            <id>jacoco-prepare-agent</id>
+            <goals>
+              <goal>prepare-agent</goal>
+            </goals>
+          </execution>
+          <execution>
+            <id>jacoco-report</id>
+            <goals>
+              <goal>report</goal>
+            </goals>
+          </execution>
+        </executions>
       </plugin>
     </plugins>
   </build>

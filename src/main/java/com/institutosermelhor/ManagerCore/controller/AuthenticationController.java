@@ -1,6 +1,8 @@
 package com.institutosermelhor.ManagerCore.controller;
 
 import java.util.Map;
+
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,7 +24,7 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController
-@RequestMapping()
+@RequestMapping
 @Tag(name = "Authentication")
 public class AuthenticationController {
 
@@ -39,7 +41,7 @@ public class AuthenticationController {
   }
 
   @PostMapping("/register")
-  public ResponseEntity<UserDto> saveUser(@RequestBody UserCreationDto userData) {
+  public ResponseEntity<UserDto> saveUser(@RequestBody @Valid UserCreationDto userData) {
     User newUser = userService.saveUser(userData.toEntity());
 
     UserDto userDto =
@@ -48,10 +50,10 @@ public class AuthenticationController {
     return ResponseEntity.status(HttpStatus.CREATED).body(userDto);
   }
 
-  @Secured("ADMIN")
-  @SecurityRequirement(name = "bearerAuth")
+//  @Secured("ADMIN")
+//  @SecurityRequirement(name = "bearerAuth")
   @PostMapping("/register/admin")
-  public ResponseEntity<UserDto> saveAdmin(@RequestBody UserCreationDto userData) {
+  public ResponseEntity<UserDto> saveAdmin(@RequestBody @Valid UserCreationDto userData) {
     User newUser = userService.saveAdmin(userData.toEntity());
 
     UserDto userDto =
