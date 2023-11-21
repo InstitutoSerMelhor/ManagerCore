@@ -29,6 +29,16 @@
 </details>
 
 <details>
+  <summary><strong> Rodando cobertura de testes </strong></summary>
+  <br/>
+
+- Rode na raiz do projeto `mvn clean verify`.
+- Vá a pasta `/target/site` que foi gerada.
+- Abra o arquivo `index.html` no navegador e já poderá ver a cobertura de testes.
+
+</details>
+
+<details>
   <summary><strong>Acordos para manter a organização</strong></summary>
   <br/>
   
