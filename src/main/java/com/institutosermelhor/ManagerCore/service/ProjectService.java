@@ -1,12 +1,16 @@
 package com.institutosermelhor.ManagerCore.service;
 
-import java.util.List;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 import com.institutosermelhor.ManagerCore.infra.exception.ConflictException;
 import com.institutosermelhor.ManagerCore.infra.exception.NotFoundException;
+import com.institutosermelhor.ManagerCore.infra.security.Role;
 import com.institutosermelhor.ManagerCore.models.entity.Project;
+import com.institutosermelhor.ManagerCore.models.entity.User;
 import com.institutosermelhor.ManagerCore.models.repository.ProjectRepository;
+import java.util.List;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.stereotype.Service;
 
 @Service
 public class ProjectService {
@@ -18,7 +22,7 @@ public class ProjectService {
     this.repository = repository;
   }
 
-  public Project saveProject(Project newProject) {
+  public Project save(Project newProject) {
     Project project = repository.findByName(newProject.getName());
     if (project != null) {
       throw new ConflictException("Project name already registered!");
@@ -36,18 +40,17 @@ public class ProjectService {
         .orElseThrow(() -> new NotFoundException("Project not found!"));
   }
 
-  public Project updateProject(Project projectToUpdate) {
-    Project project = repository.findByName(projectToUpdate.getName());
-
-    project.setDescription(projectToUpdate.getDescription());
-    project.setName(projectToUpdate.getName());
-
-    return repository.save(project);
-  }
-
-  public void deleteProject(String projectId) {
+  public void delete(String projectId) {
     Project project = findById(projectId);
     project.setEnabled(false);
     repository.save(project);
+  }
+
+  public void update(String id, Project project) {
+    Project projectToUpdate = this.findById(id);
+    projectToUpdate.setName(project.getName());
+    projectToUpdate.setDescription(project.getDescription());
+    projectToUpdate.setArea(project.getArea());
+    repository.save(projectToUpdate);
   }
 }
