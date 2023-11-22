@@ -14,6 +14,7 @@ public record UserCreationDto(
         @Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*[@#]).{6,}$")
         String password
 ) {
+
   public User toEntity() {
     return User.builder().name(name).email(email)
         .password(password).build();

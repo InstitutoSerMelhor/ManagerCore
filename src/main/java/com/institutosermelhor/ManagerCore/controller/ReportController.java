@@ -1,7 +1,16 @@
 package com.institutosermelhor.ManagerCore.controller;
 
+import com.institutosermelhor.ManagerCore.controller.Dtos.ReportDownloadDto;
+import com.institutosermelhor.ManagerCore.controller.Dtos.ReportDto;
+import com.institutosermelhor.ManagerCore.controller.Dtos.ReportUpdateDto;
+import com.institutosermelhor.ManagerCore.models.entity.Report;
+import com.institutosermelhor.ManagerCore.service.ReportService;
+import com.institutosermelhor.ManagerCore.util.ReportType;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpHeaders;
@@ -17,15 +26,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
-import com.institutosermelhor.ManagerCore.controller.Dtos.ReportDownloadDto;
-import com.institutosermelhor.ManagerCore.controller.Dtos.ReportDto;
-import com.institutosermelhor.ManagerCore.models.entity.Report;
-import com.institutosermelhor.ManagerCore.service.ReportService;
-import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController
 @RequestMapping("/reports")
 @Tag(name = "Reports")
+@SecurityRequirement(name = "bearerAuth")
 public class ReportController {
 
   private final ReportService service;
@@ -36,40 +41,49 @@ public class ReportController {
   }
 
   @Secured("ADMIN")
-  @PostMapping()
-  public ResponseEntity<String> saveFile(@RequestParam MultipartFile file) throws Exception {
-    String fileId = service.saveFile(file);
-    return ResponseEntity.ok().body(fileId);
+  @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+  public ResponseEntity<Map<String, String>> saveFile(@RequestParam String name,
+      @RequestParam("type") ReportType reportType,
+      @RequestParam MultipartFile file) throws Exception {
+    String fileId = service.saveFile(name, reportType, file);
+    return ResponseEntity.ok().body(Map.of("fileId", fileId));
   }
 
   @GetMapping("/{id}")
-  public ResponseEntity<ByteArrayResource> getFileById(@PathVariable String id) throws IOException {
+  public ResponseEntity<ByteArrayResource> downloadFile(@PathVariable String id)
+      throws IOException {
     ReportDownloadDto report = service.getFileById(id);
-    return ResponseEntity.ok().contentType(MediaType.parseMediaType(report.type()))
-        .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + report.name() + "\"")
+    return ResponseEntity.ok()
+        .contentType(MediaType.parseMediaType(report.type()))
+        .header(HttpHeaders.CONTENT_DISPOSITION,
+            "attachment; filename=\"" + report.name() + "\"")
         .body(new ByteArrayResource(report.data()));
   }
 
   @GetMapping()
-  public ResponseEntity<List<ReportDto>> getFiles() {
-    List<Report> reports = service.getFiles();
+  public ResponseEntity<List<ReportDto>> getReports(@RequestParam("type") ReportType reportType) {
+    List<Report> reports;
+    if (reportType != null) {
+      reports = service.getReportByType(reportType);
+    } else {
+      reports = service.getReports();
+    }
     List<ReportDto> reportsDto = reports.stream()
-        .map(report -> new ReportDto(report.getId(), report.getFileName(), report.getFileSize()))
+        .map(report -> new ReportDto(report.getId(), report.getName(), report.getReportType()))
         .toList();
     return ResponseEntity.ok(reportsDto);
   }
 
   @Secured("ADMIN")
-  @PutMapping()
-  public ResponseEntity<String> updateFile(@RequestParam MultipartFile file) throws Exception {
-    String fileId = service.updateFile(file);
-    return ResponseEntity.ok().body(fileId);
+  @DeleteMapping("/{id}")
+  public ResponseEntity<Void> delete(@PathVariable String id) {
+    service.delete(id);
+    return ResponseEntity.noContent().build();
   }
 
-  @Secured("ADMIN")
-  @DeleteMapping("/{id}")
-  public ResponseEntity<Void> deleteFile(@PathVariable String id) {
-    service.deleteFile(id);
+  @PutMapping("/{id}")
+  public ResponseEntity<Void> update(@PathVariable String id, ReportUpdateDto report) {
+    service.update(id, report);
     return ResponseEntity.noContent().build();
   }
 }

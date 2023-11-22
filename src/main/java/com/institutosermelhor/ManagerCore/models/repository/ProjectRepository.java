@@ -8,7 +8,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface ProjectRepository extends MongoRepository<Project, String> {
 
-  public Project findByName(String name);
+  Project findByName(String name);
 
-  public List<Project> findByIsEnabledTrue();
+  List<Project> findByIsEnabledTrue();
 }

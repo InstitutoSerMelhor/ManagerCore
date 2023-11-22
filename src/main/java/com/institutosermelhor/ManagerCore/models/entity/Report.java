@@ -1,5 +1,6 @@
 package com.institutosermelhor.ManagerCore.models.entity;
 
+import com.institutosermelhor.ManagerCore.util.ReportType;
 import java.util.Date;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -7,6 +8,7 @@ import lombok.Data;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Data
@@ -18,9 +20,10 @@ public class Report {
   @Id
   private String id;
 
-  private String fileName;
+  @Indexed(unique = true)
+  private String name;
 
-  private long fileSize;
+  private ReportType reportType;
 
   @Builder.Default
   private boolean isEnabled = true;
