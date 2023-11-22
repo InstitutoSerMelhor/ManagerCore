@@ -1,7 +1,6 @@
 package com.institutosermelhor.ManagerCore.service;
 
 import com.institutosermelhor.ManagerCore.controller.Dtos.ReportDownloadDto;
-import com.institutosermelhor.ManagerCore.controller.Dtos.ReportDto;
 import com.institutosermelhor.ManagerCore.controller.Dtos.ReportUpdateDto;
 import com.institutosermelhor.ManagerCore.infra.exception.BadRequestException;
 import com.institutosermelhor.ManagerCore.infra.exception.ConflictException;
@@ -12,7 +11,6 @@ import com.institutosermelhor.ManagerCore.util.ReportType;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 import com.mongodb.client.gridfs.model.GridFSFile;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
@@ -27,11 +25,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 @Service
 public class ReportService {
-
   private final GridFsTemplate gridFsTemplate;
-
   private final GridFsOperations gridFsOperations;
-
   private final ReportRepository repository;
 
   @Autowired

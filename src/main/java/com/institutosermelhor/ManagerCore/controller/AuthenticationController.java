@@ -10,6 +10,7 @@ import com.institutosermelhor.ManagerCore.service.TokenService;
 import com.institutosermelhor.ManagerCore.service.UserService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,7 +26,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping()
+@RequestMapping
 @Tag(name = "Authentication")
 public class AuthenticationController {
 
@@ -53,11 +54,11 @@ public class AuthenticationController {
   @Secured("ADMIN")
   @SecurityRequirement(name = "bearerAuth")
   @PostMapping("/register/admin")
-  public ResponseEntity<UserDto> saveAdmin(@RequestBody UserCreationDto userData) {
+  public ResponseEntity<UserDto> saveAdmin(@RequestBody @Valid UserCreationDto userData) {
     User newUser = userService.saveAdmin(userData.toEntity());
 
     UserDto userDto =
-        new UserDto(newUser.getId(), newUser.getUsername(), newUser.getEmail(), newUser.getRole());
+        new UserDto(newUser.getId(), newUser.getName(), newUser.getEmail(), newUser.getRole());
 
     return ResponseEntity.status(HttpStatus.CREATED).body(userDto);
   }

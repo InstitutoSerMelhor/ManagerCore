@@ -40,7 +40,7 @@ public class ReportController {
     this.service = service;
   }
 
-  //  @Secured("ADMIN")
+  @Secured("ADMIN")
   @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
   public ResponseEntity<Map<String, String>> saveFile(@RequestParam String name,
       @RequestParam("type") ReportType reportType,

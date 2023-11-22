@@ -24,7 +24,17 @@
   <summary><strong> Rodando testes </strong></summary>
   <br/>
   
-  - Rodando Testes Unitários(você deve estar na pasta raiz) - `mvn test`.
+  - Rodando testes(você deve estar na pasta raiz) - `mvn test`.
+
+</details>
+
+<details>
+  <summary><strong> Rodando cobertura de testes </strong></summary>
+  <br/>
+
+- Rode na raiz do projeto `mvn clean verify`.
+- Vá a pasta `/target/site` que foi gerada.
+- Abra o arquivo `index.html` no navegador e já poderá ver a cobertura de testes.
 
 </details>
 
