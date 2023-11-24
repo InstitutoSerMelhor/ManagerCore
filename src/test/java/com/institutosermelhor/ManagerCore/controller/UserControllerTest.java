@@ -105,6 +105,31 @@ class UserControllerTest extends MongoDbTestContainerConfigTest {
         Assertions.assertEquals(userUpdated.getName(), userToUpdate.name());
     }
 
+    @Test
+    @DisplayName("getUser method when user collection has an user return this user")
+    @WithMockUser
+    void testApiEndpoint6() throws Exception {
+        User user = this.userRepository.save(this.giveMeAnUser());
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/users/" + user.getId()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").isNotEmpty())
+                .andExpect(jsonPath("$.name").value(giveMeAnUser().getName()))
+                .andExpect(jsonPath("$.email").value(giveMeAnUser().getEmail()))
+                .andExpect(jsonPath("$.role").value(giveMeAnUser().getRole().toString()));
+    }
+
+    @Test
+    @DisplayName("getUser method when user collection is empty throw not found")
+    @WithMockUser
+    void testApiEndpoint7() throws Exception {
+        String fakeId = "455555";
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/users/" + fakeId))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message").value(is("User not found!")));
+    }
+
     private User giveMeAnUser() {
         String passwordHashed = new BCryptPasswordEncoder().encode("odeSaiDoMeuSofa");
         return new User(
