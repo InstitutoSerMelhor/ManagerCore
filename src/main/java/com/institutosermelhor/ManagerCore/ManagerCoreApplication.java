@@ -15,9 +15,7 @@ import io.swagger.v3.oas.annotations.security.SecurityScheme;
 @SecurityScheme(name = "bearerAuth", description = "JWT auth required", scheme = "bearer",
     type = SecuritySchemeType.HTTP, bearerFormat = "JWT", in = SecuritySchemeIn.HEADER)
 public class ManagerCoreApplication {
-
   public static void main(String[] args) {
     SpringApplication.run(ManagerCoreApplication.class, args);
   }
-
 }

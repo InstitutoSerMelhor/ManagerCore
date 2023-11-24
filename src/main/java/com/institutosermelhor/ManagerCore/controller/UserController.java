@@ -2,7 +2,6 @@ package com.institutosermelhor.ManagerCore.controller;
 
 import com.institutosermelhor.ManagerCore.controller.Dtos.UserCreationDto;
 import com.institutosermelhor.ManagerCore.controller.Dtos.UserDto;
-import com.institutosermelhor.ManagerCore.controller.Dtos.UserRequestDto;
 import com.institutosermelhor.ManagerCore.models.entity.User;
 import com.institutosermelhor.ManagerCore.service.UserService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -13,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -62,9 +62,6 @@ public class UserController {
   @PutMapping("{userId}")
   public ResponseEntity<UserDto> update(@PathVariable String userId,
       @RequestBody UserCreationDto userData) {
-    Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-    User user = (User) auth.getPrincipal();
-    service.update(userId, userData.toEntity(), user.getEmail());
-    return ResponseEntity.noContent().build();
-  }
+    service.update(userId, userData.toEntity());
+    return ResponseEntity.noContent().build();  }
 }

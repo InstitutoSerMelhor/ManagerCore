@@ -2,7 +2,9 @@ package com.institutosermelhor.ManagerCore.controller.Dtos;
 
 import com.institutosermelhor.ManagerCore.models.entity.User;
 import jakarta.validation.constraints.*;
+import lombok.Builder;
 
+@Builder
 public record UserCreationDto(
         @NotEmpty
         @Size(min = 5, message = "Characters min 5")

@@ -58,15 +58,14 @@ public class UserService implements UserDetailsService {
     return repository.findById(userId).orElseThrow(() -> new NotFoundException("User not found!"));
   }
 
-  public void update(String userId, User user, String userEmail) {
+  public void update(String userId, User user) {
     User userToUpdate = this.findById(userId);
-    if (!Objects.equals(userToUpdate.getEmail(), userEmail)) {
-      throw new UnauthorizedException();
-    }
 
-    userToUpdate.setName(user.getUsername());
+    String passwordHashed = new BCryptPasswordEncoder().encode(user.getPassword());
+
+    userToUpdate.setName(user.getName());
     userToUpdate.setEmail(user.getEmail());
-    userToUpdate.setPassword(user.getPassword());
+    userToUpdate.setPassword(passwordHashed);
     repository.save(userToUpdate);
   }
 
@@ -78,6 +77,11 @@ public class UserService implements UserDetailsService {
 
   @Override
   public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-    return repository.findByEmail(email);
+    User user = repository.findByEmail(email).orElseThrow(
+            () -> new UsernameNotFoundException("User not found"));
+    return new org.springframework.security.core.userdetails.User(
+            user.getEmail(),
+            user.getPassword(),
+            user.getAuthorities());
   }
 }
