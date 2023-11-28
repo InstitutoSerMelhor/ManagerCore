@@ -4,6 +4,8 @@ import com.institutosermelhor.ManagerCore.controller.Dtos.ProjectCreationDto;
 import com.institutosermelhor.ManagerCore.controller.Dtos.ProjectDto;
 import com.institutosermelhor.ManagerCore.models.entity.Project;
 import com.institutosermelhor.ManagerCore.service.ProjectService;
+
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/projects")
 @Tag(name = "Projects")
+@SecurityRequirement(name = "bearerAuth")
 public class ProjectController {
 
   private final ProjectService service;
