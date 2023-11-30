@@ -11,12 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -31,115 +27,116 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringJUnitConfig
 @AutoConfigureMockMvc
 class UserControllerTest extends MongoDbTestContainerConfigTest {
-    @Autowired
-    private MockMvc mockMvc;
 
-    @Autowired
-    private UserRepository userRepository;
+  @Autowired
+  private MockMvc mockMvc;
 
-    @AfterEach
-    void cleanAll() {
-        this.userRepository.deleteAll();
-    }
+  @Autowired
+  private UserRepository userRepository;
 
-    @Test
-    @DisplayName("getUsers method when user collection is empty return an empty list")
-    @WithMockUser
-    void testApiEndpoint() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.get("/users"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$").value(equalTo(List.of())))
-                .andExpect(jsonPath("$.length()", is(0)));
-    }
+  @AfterEach
+  void cleanAll() {
+    this.userRepository.deleteAll();
+  }
 
-    @Test
-    @DisplayName("getUsers method when user collection has users return an users list")
-    @WithMockUser
-    void testApiEndpoint2() throws Exception {
-        this.userRepository.save(this.giveMeAnUser());
+  @Test
+  @DisplayName("getUsers method when user collection is empty return an empty list")
+  @WithMockUser
+  void testApiEndpoint() throws Exception {
+    mockMvc.perform(MockMvcRequestBuilders.get("/users"))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$").value(equalTo(List.of())))
+        .andExpect(jsonPath("$.length()", is(0)));
+  }
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/users"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$", hasSize(1)))
-                .andExpect(jsonPath("$[0].id").isNotEmpty())
-                .andExpect(jsonPath("$[0].name").value(giveMeAnUser().getName()))
-                .andExpect(jsonPath("$[0].email").value(giveMeAnUser().getEmail()))
-                .andExpect(jsonPath("$[0].role").value(giveMeAnUser().getRole().toString()));
-    }
+  @Test
+  @DisplayName("getUsers method when user collection has users return an users list")
+  @WithMockUser
+  void testApiEndpoint2() throws Exception {
+    this.userRepository.save(this.giveMeAnUser());
 
-    @Test
-    @DisplayName("delete method when delete an user return no content")
-    @WithMockUser
-    void testApiEndpoint3() throws Exception {
-        User user = this.userRepository.save(this.giveMeAnUser());
+    mockMvc.perform(MockMvcRequestBuilders.get("/users"))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$", hasSize(1)))
+        .andExpect(jsonPath("$[0].id").isNotEmpty())
+        .andExpect(jsonPath("$[0].name").value(giveMeAnUser().getName()))
+        .andExpect(jsonPath("$[0].email").value(giveMeAnUser().getEmail()))
+        .andExpect(jsonPath("$[0].role").value(giveMeAnUser().getRole().toString()));
+  }
 
-        mockMvc.perform(MockMvcRequestBuilders.delete("/users/" + user.getId()))
-                .andExpect(status().isNoContent());
+  @Test
+  @DisplayName("delete method when delete an user return no content")
+  @WithMockUser(username = "lasanha@gmail.com")
+  void testApiEndpoint3() throws Exception {
+    User user = this.userRepository.save(this.giveMeAnUser());
 
-        User userSearched = this.userRepository.findAll().get(0);
-        Assertions.assertFalse(userSearched.isEnabled());
-    }
+    mockMvc.perform(MockMvcRequestBuilders.delete("/users/" + user.getId()))
+        .andExpect(status().isNoContent());
 
-    @Test
-    @DisplayName("update method when update user data return user data updated")
-    @WithMockUser
-    void testApiEndpoint5() throws Exception {
-        User userToCreate = this.giveMeAnUser();
-        User userInserted = this.userRepository.save(userToCreate);
+    User userSearched = this.userRepository.findAll().get(0);
+    Assertions.assertFalse(userSearched.isEnabled());
+  }
 
-        UserCreationDto userToUpdate = UserCreationDto.builder()
-                .name("Garfield Rei do Pedaço")
-                .email("euamolasanha@gmail.com")
-                .password("lasanhaLover")
-                .build();
+  @Test
+  @DisplayName("update method when update user data return user data updated")
+  @WithMockUser(username = "lasanha@gmail.com")
+  void testApiEndpoint5() throws Exception {
+    User userToCreate = this.giveMeAnUser();
+    User userInserted = this.userRepository.save(userToCreate);
 
-        mockMvc.perform(MockMvcRequestBuilders.put("/users/" + userInserted.getId())
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(new ObjectMapper().writeValueAsString(userToUpdate)))
-                .andExpect(status().isNoContent());
+    UserCreationDto userToUpdate = UserCreationDto.builder()
+        .name("Garfield Rei do Pedaço")
+        .email("euamolasanha@gmail.com")
+        .password("lasanhaLover")
+        .build();
 
-        User userUpdated = this.userRepository.findAll().get(0);
-        Assertions.assertEquals(userUpdated.getId(), userInserted.getId());
-        Assertions.assertNotEquals(userUpdated.getPassword(), userInserted.getPassword());
-        Assertions.assertEquals(userUpdated.getEmail(), userToUpdate.email());
-        Assertions.assertEquals(userUpdated.getName(), userToUpdate.name());
-    }
+    mockMvc.perform(MockMvcRequestBuilders.put("/users/" + userInserted.getId())
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(new ObjectMapper().writeValueAsString(userToUpdate)))
+        .andExpect(status().isNoContent());
 
-    @Test
-    @DisplayName("getUser method when user collection has an user return this user")
-    @WithMockUser
-    void testApiEndpoint6() throws Exception {
-        User user = this.userRepository.save(this.giveMeAnUser());
+    User userUpdated = this.userRepository.findAll().get(0);
+    Assertions.assertEquals(userUpdated.getId(), userInserted.getId());
+    Assertions.assertNotEquals(userUpdated.getPassword(), userInserted.getPassword());
+    Assertions.assertEquals(userUpdated.getEmail(), userToUpdate.email());
+    Assertions.assertEquals(userUpdated.getName(), userToUpdate.name());
+  }
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/users/" + user.getId()))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").isNotEmpty())
-                .andExpect(jsonPath("$.name").value(giveMeAnUser().getName()))
-                .andExpect(jsonPath("$.email").value(giveMeAnUser().getEmail()))
-                .andExpect(jsonPath("$.role").value(giveMeAnUser().getRole().toString()));
-    }
+  @Test
+  @DisplayName("getUser method when user collection has an user return this user")
+  @WithMockUser
+  void testApiEndpoint6() throws Exception {
+    User user = this.userRepository.save(this.giveMeAnUser());
 
-    @Test
-    @DisplayName("getUser method when user collection is empty throw not found")
-    @WithMockUser
-    void testApiEndpoint7() throws Exception {
-        String fakeId = "455555";
+    mockMvc.perform(MockMvcRequestBuilders.get("/users/" + user.getId()))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.id").isNotEmpty())
+        .andExpect(jsonPath("$.name").value(giveMeAnUser().getName()))
+        .andExpect(jsonPath("$.email").value(giveMeAnUser().getEmail()))
+        .andExpect(jsonPath("$.role").value(giveMeAnUser().getRole().toString()));
+  }
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/users/" + fakeId))
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.message").value(is("User not found!")));
-    }
+  @Test
+  @DisplayName("getUser method when user collection is empty throw not found")
+  @WithMockUser
+  void testApiEndpoint7() throws Exception {
+    String fakeId = "455555";
 
-    private User giveMeAnUser() {
-        String passwordHashed = new BCryptPasswordEncoder().encode("odeSaiDoMeuSofa");
-        return new User(
-                null,
-                "Garfield",
-                "lasanha@gmail.com",
-                passwordHashed,
-                Role.ADMIN,
-                true,
-                null,
-                null);
-    }
+    mockMvc.perform(MockMvcRequestBuilders.get("/users/" + fakeId))
+        .andExpect(status().isBadRequest())
+        .andExpect(jsonPath("$.message").value(is("User not found!")));
+  }
+
+  private User giveMeAnUser() {
+    String passwordHashed = new BCryptPasswordEncoder().encode("odeSaiDoMeuSofa");
+    return new User(
+        null,
+        "Garfield",
+        "lasanha@gmail.com",
+        passwordHashed,
+        Role.ADMIN,
+        true,
+        null,
+        null);
+  }
 }
