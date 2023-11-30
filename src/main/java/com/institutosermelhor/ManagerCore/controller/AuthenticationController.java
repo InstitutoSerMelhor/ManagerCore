@@ -76,8 +76,7 @@ public class AuthenticationController {
 
       return ResponseEntity.status(HttpStatus.OK).body(token);
     } catch (InternalAuthenticationServiceException | BadCredentialsException e) {
-      throw new BadRequestException("Username or password incorrect");
+      throw new BadRequestException("Email or password incorrect");
     }
-
   }
 }
