@@ -6,6 +6,7 @@ import com.institutosermelhor.ManagerCore.models.entity.Project;
 import com.institutosermelhor.ManagerCore.service.ProjectService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -54,7 +55,7 @@ public class ProjectController {
   @Secured("ADMIN")
   @SecurityRequirement(name = "bearerAuth")
   @PostMapping()
-  public ResponseEntity<ProjectDto> save(@RequestBody ProjectCreationDto newProject) {
+  public ResponseEntity<ProjectDto> save(@RequestBody @Valid ProjectCreationDto newProject) {
     Project project = service.save(newProject.toEntity());
     ProjectDto projectDto = new ProjectDto(project.getId(), project.getName(),
         project.getDescription(), project.getArea());
@@ -73,7 +74,7 @@ public class ProjectController {
   @SecurityRequirement(name = "bearerAuth")
   @PutMapping("/{id}")
   public ResponseEntity<ProjectDto> update(@PathVariable String id,
-      @RequestBody ProjectCreationDto project) {
+      @RequestBody @Valid ProjectCreationDto project) {
     service.update(id, project.toEntity());
     return ResponseEntity.noContent().build();
   }

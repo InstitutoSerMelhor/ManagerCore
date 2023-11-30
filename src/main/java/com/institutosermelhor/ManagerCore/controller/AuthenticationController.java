@@ -43,7 +43,7 @@ public class AuthenticationController {
   }
 
   @PostMapping("/register")
-  public ResponseEntity<AuthResponseDto> saveUser(@RequestBody UserCreationDto userData) {
+  public ResponseEntity<AuthResponseDto> saveUser(@RequestBody @Valid UserCreationDto userData) {
     User newUser = userService.saveUser(userData.toEntity());
 
     AuthResponseDto token = new AuthResponseDto(tokenService.generateToken(newUser));
@@ -65,7 +65,7 @@ public class AuthenticationController {
 
   @PostMapping("/login")
   public ResponseEntity<AuthResponseDto> login(
-      @RequestBody AuthDto authenticationDTO) {
+      @RequestBody @Valid AuthDto authenticationDTO) {
     try {
       UsernamePasswordAuthenticationToken usernamePassword =
           new UsernamePasswordAuthenticationToken(authenticationDTO.email(),
