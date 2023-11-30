@@ -14,6 +14,7 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
@@ -30,7 +31,6 @@ import org.springframework.web.multipart.MultipartFile;
 @RestController
 @RequestMapping("/reports")
 @Tag(name = "Reports")
-@SecurityRequirement(name = "bearerAuth")
 public class ReportController {
 
   private final ReportService service;
@@ -41,12 +41,13 @@ public class ReportController {
   }
 
   @Secured("ADMIN")
+  @SecurityRequirement(name = "bearerAuth")
   @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
   public ResponseEntity<Map<String, String>> saveFile(@RequestParam String name,
       @RequestParam("type") ReportType reportType,
       @RequestParam MultipartFile file) throws Exception {
     String fileId = service.saveFile(name, reportType, file);
-    return ResponseEntity.ok().body(Map.of("fileId", fileId));
+    return ResponseEntity.status(HttpStatus.CREATED).body(Map.of("fileId", fileId));
   }
 
   @GetMapping("/{id}")
@@ -75,12 +76,15 @@ public class ReportController {
   }
 
   @Secured("ADMIN")
+  @SecurityRequirement(name = "bearerAuth")
   @DeleteMapping("/{id}")
   public ResponseEntity<Void> delete(@PathVariable String id) {
     service.delete(id);
     return ResponseEntity.noContent().build();
   }
 
+  @Secured("ADMIN")
+  @SecurityRequirement(name = "bearerAuth")
   @PutMapping("/{id}")
   public ResponseEntity<Void> update(@PathVariable String id, ReportUpdateDto report) {
     service.update(id, report);

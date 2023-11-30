@@ -10,8 +10,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -54,14 +53,18 @@ public class UserController {
   }
 
   @DeleteMapping("{userId}")
-  public ResponseEntity<Void> delete(@PathVariable String userId) {
-    service.delete(userId);
+  public ResponseEntity<Void> delete(@PathVariable String userId,
+      @AuthenticationPrincipal UserDetails userDetails) {
+    service.delete(userId, userDetails.getUsername());
+
     return ResponseEntity.noContent().build();
   }
 
   @PutMapping("{userId}")
   public ResponseEntity<UserDto> update(@PathVariable String userId,
-      @RequestBody UserCreationDto userData) {
-    service.update(userId, userData.toEntity());
-    return ResponseEntity.noContent().build();  }
+      @RequestBody UserCreationDto userData, @AuthenticationPrincipal UserDetails userDetails) {
+    service.update(userId, userData.toEntity(), userDetails.getUsername());
+
+    return ResponseEntity.noContent().build();
+  }
 }

@@ -35,10 +35,10 @@ public class SecurityConfiguration {
         .sessionManagement(
             session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
         .authorizeHttpRequests(authorize -> authorize
-            .requestMatchers(HttpMethod.POST, "/register").permitAll()
-            .requestMatchers(HttpMethod.POST, "/login").permitAll()
+            .requestMatchers(HttpMethod.POST, "/register", "/login").permitAll()
             .requestMatchers(HttpMethod.GET, "/swagger-ui/**",
-                "/swagger-resources/*", "/v3/api-docs/**").permitAll()
+                "/swagger-resources/*", "/v3/api-docs/**", "/projects", "/projects/*", "/reports",
+                "/reports/*").permitAll()
             .anyRequest().authenticated()
         )
         .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
