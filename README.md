@@ -16,7 +16,7 @@
     - Instale as dependências `mvn install`.
     - E inicie a aplicação `mvn spring-boot:run`
 
-3. Acesse a aplicação usando essa url `http://localhost:8080`.
+3. Acesse a aplicação usando essa url `http://localhost:8080/swagger-ui/index.html`.
 
 </details>
 
