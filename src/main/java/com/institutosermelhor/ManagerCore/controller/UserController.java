@@ -40,7 +40,6 @@ public class UserController {
     List<UserDto> usersDto = users.stream()
         .map(user -> new UserDto(user.getId(), user.getName(), user.getEmail(), user.getRole()))
         .toList();
-
     return ResponseEntity.status(HttpStatus.OK).body(usersDto);
   }
 
@@ -49,7 +48,6 @@ public class UserController {
     User user = service.findById(id);
     UserDto userDto = new UserDto(user.getId(), user.getName(), user.getEmail(),
         user.getRole());
-
     return ResponseEntity.status(HttpStatus.OK).body(userDto);
   }
 
