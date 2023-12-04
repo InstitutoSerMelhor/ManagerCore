@@ -10,8 +10,6 @@ public class PDFValidator implements ConstraintValidator<PDFTester, MultipartFil
     @Override
     public boolean isValid(MultipartFile value, ConstraintValidatorContext context) {
         try {
-            System.out.println(value);
-            System.out.println("no report " + value.getContentType());
             return "application/pdf".equals(value.getContentType());
         } catch (Exception e) {
             // Registre a exceção para depuração
