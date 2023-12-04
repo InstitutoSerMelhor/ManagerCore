@@ -1,6 +1,7 @@
 package com.institutosermelhor.ManagerCore.models.entity;
 
 import com.institutosermelhor.ManagerCore.util.ReportType;
+
 import java.util.Date;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
