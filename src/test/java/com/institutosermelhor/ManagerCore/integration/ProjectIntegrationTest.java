@@ -1,16 +1,15 @@
 package com.institutosermelhor.ManagerCore.integration;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.institutosermelhor.ManagerCore.MongoDbTestContainerConfigTest;
-import com.institutosermelhor.ManagerCore.controller.Dtos.AuthDto;
+import com.institutosermelhor.ManagerCore.MongoDbTestcontainerConfigTest;
 import com.institutosermelhor.ManagerCore.controller.Dtos.ProjectCreationDto;
+import com.institutosermelhor.ManagerCore.mocks.ProjectMock;
 import com.institutosermelhor.ManagerCore.models.entity.Project;
 import com.institutosermelhor.ManagerCore.models.repository.ProjectRepository;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
@@ -26,13 +25,16 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @SpringJUnitConfig
 @AutoConfigureMockMvc
-class ProjectIntegrationTest extends MongoDbTestContainerConfigTest {
+class ProjectIntegrationTest extends MongoDbTestcontainerConfigTest {
 
   @Autowired
   private MockMvc mockMvc;
 
   @Autowired
   private ProjectRepository projectRepository;
+
+  @Autowired
+  private ProjectMock projectMock;
 
   @AfterEach
   void cleanAll() {
@@ -51,22 +53,22 @@ class ProjectIntegrationTest extends MongoDbTestContainerConfigTest {
   @Test
   @DisplayName("getProjects method when user collection has projects return an projects list")
   void testApiEndpoint2() throws Exception {
-    this.projectRepository.save(this.giveMeAProject());
+    this.projectRepository.save(this.projectMock.giveMeAProject());
 
     mockMvc.perform(MockMvcRequestBuilders.get("/projects"))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$", hasSize(1)))
         .andExpect(jsonPath("$[0].id").isNotEmpty())
-        .andExpect(jsonPath("$[0].name").value(giveMeAProject().getName()))
-        .andExpect(jsonPath("$[0].description").value(giveMeAProject().getDescription()))
-        .andExpect(jsonPath("$[0].area").value(giveMeAProject().getArea()));
+        .andExpect(jsonPath("$[0].name").value(this.projectMock.giveMeAProject().getName()))
+        .andExpect(jsonPath("$[0].description").value(this.projectMock.giveMeAProject().getDescription()))
+        .andExpect(jsonPath("$[0].area").value(this.projectMock.giveMeAProject().getArea()));
   }
 
   @Test
   @DisplayName("delete method when delete an project return no content")
   @WithMockUser(authorities = {"ADMIN"})
   void testApiEndpoint3() throws Exception {
-    Project project = this.projectRepository.save(this.giveMeAProject());
+    Project project = this.projectRepository.save(this.projectMock.giveMeAProject());
 
     mockMvc.perform(MockMvcRequestBuilders.delete("/projects/" + project.getId()))
         .andExpect(status().isNoContent());
@@ -79,12 +81,12 @@ class ProjectIntegrationTest extends MongoDbTestContainerConfigTest {
   @DisplayName("update method when update project data return project data updated")
   @WithMockUser(authorities = {"ADMIN"})
   void testApiEndpoint5() throws Exception {
-    Project projectToCreate = this.giveMeAProject();
+    Project projectToCreate = this.projectMock.giveMeAProject();
     Project projectInserted = this.projectRepository.save(projectToCreate);
 
     ProjectCreationDto projectToUpdate = new ProjectCreationDto(
         "New project name",
-        "New description",
+        "A".repeat(200),
         "New area"
     );
 
@@ -103,14 +105,14 @@ class ProjectIntegrationTest extends MongoDbTestContainerConfigTest {
   @Test
   @DisplayName("getProject method when user collection has an user return this user")
   void testApiEndpoint6() throws Exception {
-    Project project = this.projectRepository.save(this.giveMeAProject());
+    Project project = this.projectRepository.save(this.projectMock.giveMeAProject());
 
     mockMvc.perform(MockMvcRequestBuilders.get("/projects/" + project.getId()))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.id").isNotEmpty())
-        .andExpect(jsonPath("$.name").value(giveMeAProject().getName()))
-        .andExpect(jsonPath("$.description").value(giveMeAProject().getDescription()))
-        .andExpect(jsonPath("$.area").value(giveMeAProject().getArea()));
+        .andExpect(jsonPath("$.name").value(this.projectMock.giveMeAProject().getName()))
+        .andExpect(jsonPath("$.description").value(this.projectMock.giveMeAProject().getDescription()))
+        .andExpect(jsonPath("$.area").value(this.projectMock.giveMeAProject().getArea()));
   }
 
   @Test
@@ -121,16 +123,5 @@ class ProjectIntegrationTest extends MongoDbTestContainerConfigTest {
     mockMvc.perform(MockMvcRequestBuilders.get("/projects/" + fakeId))
         .andExpect(status().isBadRequest())
         .andExpect(jsonPath("$.message").value(is("Project not found!")));
-  }
-
-  private Project giveMeAProject() {
-    return new Project(
-        null,
-        "Project 1",
-        "Random project",
-        "Development",
-        null,
-        null,
-        true);
   }
 }

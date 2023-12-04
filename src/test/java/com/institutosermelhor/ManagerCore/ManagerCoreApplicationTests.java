@@ -15,7 +15,7 @@ class ManagerCoreApplicationTests {
 	}
 
 	@Test
-	void hasauthController(ApplicationContext context) {
+	void hasAuthController(ApplicationContext context) {
 		assertThat(context.getBean(AuthenticationController.class)).isNotNull();
 	}
 }
