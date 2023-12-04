@@ -1,6 +1,5 @@
 package com.institutosermelhor.ManagerCore;
 
-import jakarta.validation.constraints.AssertTrue;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.context.DynamicPropertyRegistry;
@@ -14,7 +13,7 @@ import org.testcontainers.utility.DockerImageName;
 @TestPropertySource(properties = {
         "spring.data.mongodb.uri=mongodb://${testcontainer.container.host}:${testcontainer.container.port}/${testcontainer.container.databaseName}"
 })
-public class MongoDbTestContainerConfigTest {
+public class MongoDbTestcontainerConfigTest {
     @Container
     public static MongoDBContainer mongoDBContainer = new MongoDBContainer(
                 DockerImageName.parse("mongo:latest"))
