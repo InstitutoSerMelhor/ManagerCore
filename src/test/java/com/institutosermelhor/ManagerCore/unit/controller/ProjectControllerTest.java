@@ -1,7 +1,7 @@
 package com.institutosermelhor.ManagerCore.unit.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.institutosermelhor.ManagerCore.MongoDbTestContainerConfigTest;
+import com.institutosermelhor.ManagerCore.MongoDbTestcontainerConfigTest;
 import com.institutosermelhor.ManagerCore.controller.Dtos.ProjectCreationDto;
 import com.institutosermelhor.ManagerCore.models.entity.Project;
 import com.institutosermelhor.ManagerCore.service.ProjectService;
@@ -26,7 +26,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @SpringJUnitConfig
 @AutoConfigureMockMvc
-class ProjectControllerTest extends MongoDbTestContainerConfigTest {
+class ProjectControllerTest extends MongoDbTestcontainerConfigTest {
 
   @Autowired
   private MockMvc mockMvc;

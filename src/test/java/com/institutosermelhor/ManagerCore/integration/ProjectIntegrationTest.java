@@ -1,8 +1,7 @@
 package com.institutosermelhor.ManagerCore.integration;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.institutosermelhor.ManagerCore.MongoDbTestContainerConfigTest;
-import com.institutosermelhor.ManagerCore.controller.Dtos.AuthDto;
+import com.institutosermelhor.ManagerCore.MongoDbTestcontainerConfigTest;
 import com.institutosermelhor.ManagerCore.controller.Dtos.ProjectCreationDto;
 import com.institutosermelhor.ManagerCore.models.entity.Project;
 import com.institutosermelhor.ManagerCore.models.repository.ProjectRepository;
@@ -10,7 +9,6 @@ import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
@@ -26,7 +24,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @SpringJUnitConfig
 @AutoConfigureMockMvc
-class ProjectIntegrationTest extends MongoDbTestContainerConfigTest {
+class ProjectIntegrationTest extends MongoDbTestcontainerConfigTest {
 
   @Autowired
   private MockMvc mockMvc;
