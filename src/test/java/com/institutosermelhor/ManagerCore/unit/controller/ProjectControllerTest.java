@@ -1,9 +1,8 @@
 package com.institutosermelhor.ManagerCore.unit.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.institutosermelhor.ManagerCore.MongoDbTestcontainerConfigTest;
 import com.institutosermelhor.ManagerCore.controller.Dtos.ProjectCreationDto;
-import com.institutosermelhor.ManagerCore.models.entity.Project;
+import com.institutosermelhor.ManagerCore.mocks.ProjectMock;
 import com.institutosermelhor.ManagerCore.service.ProjectService;
 import org.junit.jupiter.api.*;
 import org.mockito.Mockito;
@@ -26,13 +25,16 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @SpringJUnitConfig
 @AutoConfigureMockMvc
-class ProjectControllerTest extends MongoDbTestcontainerConfigTest {
+class ProjectControllerTest {
 
   @Autowired
   private MockMvc mockMvc;
 
   @MockBean
   private ProjectService projectService;
+
+  @Autowired
+  private ProjectMock projectMock;
 
   @Test
   @DisplayName("getProjects method when user collection is empty return an empty list")
@@ -48,15 +50,15 @@ class ProjectControllerTest extends MongoDbTestcontainerConfigTest {
   @Test
   @DisplayName("getProjects method when user collection has projects returns projects list")
   void testApiEndpoint2() throws Exception {
-    Mockito.when(projectService.getProjects()).thenReturn(List.of(giveMeAProject()));
+    Mockito.when(projectService.getProjects()).thenReturn(List.of(projectMock.giveMeAProject()));
 
     mockMvc.perform(MockMvcRequestBuilders.get("/projects"))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$", hasSize(1)))
         .andExpect(jsonPath("$[0].id").isNotEmpty())
-        .andExpect(jsonPath("$[0].name").value(giveMeAProject().getName()))
-        .andExpect(jsonPath("$[0].description").value(giveMeAProject().getDescription()))
-        .andExpect(jsonPath("$[0].area").value(giveMeAProject().getArea()));
+        .andExpect(jsonPath("$[0].name").value(projectMock.giveMeAProject().getName()))
+        .andExpect(jsonPath("$[0].description").value(projectMock.giveMeAProject().getDescription()))
+        .andExpect(jsonPath("$[0].area").value(projectMock.giveMeAProject().getArea()));
 
     Mockito.verify(projectService).getProjects();
   }
@@ -65,10 +67,10 @@ class ProjectControllerTest extends MongoDbTestcontainerConfigTest {
   @DisplayName("delete method when delete a project returns no content")
   @WithMockUser(authorities = {"ADMIN"})
   void testApiEndpoint3() throws Exception {
-    mockMvc.perform(MockMvcRequestBuilders.delete("/projects/" + giveMeAProject().getId()))
+    mockMvc.perform(MockMvcRequestBuilders.delete("/projects/" + projectMock.giveMeAProject().getId()))
         .andExpect(status().isNoContent());
 
-    Mockito.verify(projectService).delete(giveMeAProject().getId());
+    Mockito.verify(projectService).delete(projectMock.giveMeAProject().getId());
   }
 
   @Test
@@ -77,40 +79,29 @@ class ProjectControllerTest extends MongoDbTestcontainerConfigTest {
   void testApiEndpoint5() throws Exception {
     ProjectCreationDto projectToUpdate = new ProjectCreationDto(
         "New project name",
-        "New description",
+        "A".repeat(200),
         "New area"
     );
 
-    mockMvc.perform(MockMvcRequestBuilders.put("/projects/" + giveMeAProject().getId())
+    mockMvc.perform(MockMvcRequestBuilders.put("/projects/" + projectMock.giveMeAProject().getId())
             .contentType(MediaType.APPLICATION_JSON)
             .content(new ObjectMapper().writeValueAsString(projectToUpdate)))
         .andExpect(status().isNoContent());
 
-    Mockito.verify(projectService).update(giveMeAProject().getId(), projectToUpdate.toEntity());
+    Mockito.verify(projectService).update(projectMock.giveMeAProject().getId(), projectToUpdate.toEntity());
   }
 
   @Test
   @DisplayName("getProject method when user collection has a project return this project")
   void testApiEndpoint6() throws Exception {
-    Mockito.when(projectService.findById(eq(giveMeAProject().getId())))
-        .thenReturn(giveMeAProject());
+    Mockito.when(projectService.findById(eq(projectMock.giveMeAProject().getId())))
+        .thenReturn(projectMock.giveMeAProject());
 
-    mockMvc.perform(MockMvcRequestBuilders.get("/projects/" + giveMeAProject().getId()))
+    mockMvc.perform(MockMvcRequestBuilders.get("/projects/" + projectMock.giveMeAProject().getId()))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.id").isNotEmpty())
-        .andExpect(jsonPath("$.name").value(giveMeAProject().getName()))
-        .andExpect(jsonPath("$.description").value(giveMeAProject().getDescription()))
-        .andExpect(jsonPath("$.area").value(giveMeAProject().getArea()));
-  }
-
-  private Project giveMeAProject() {
-    return new Project(
-        "validId123",
-        "Project 1",
-        "Random project",
-        "Development",
-        null,
-        null,
-        true);
+        .andExpect(jsonPath("$.name").value(projectMock.giveMeAProject().getName()))
+        .andExpect(jsonPath("$.description").value(projectMock.giveMeAProject().getDescription()))
+        .andExpect(jsonPath("$.area").value(projectMock.giveMeAProject().getArea()));
   }
 }
