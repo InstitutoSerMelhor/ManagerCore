@@ -58,8 +58,11 @@ public class UserService implements UserDetailsService {
     return repository.findById(userId).orElseThrow(() -> new NotFoundException("User not found!"));
   }
 
-  public void update(String userId, User user) {
+  public void update(String userId, User user, String userEmail) {
     User userToUpdate = this.findById(userId);
+    if (!Objects.equals(userToUpdate.getEmail(), userEmail)) {
+      throw new UnauthorizedException();
+    }
 
     String passwordHashed = new BCryptPasswordEncoder().encode(user.getPassword());
 
@@ -69,8 +72,12 @@ public class UserService implements UserDetailsService {
     repository.save(userToUpdate);
   }
 
-  public void delete(String userId) {
+  public void delete(String userId, String userEmail) {
     User user = this.findById(userId);
+    if (!Objects.equals(user.getEmail(), userEmail)) {
+      throw new UnauthorizedException();
+    }
+
     user.setEnabled(false);
     repository.save(user);
   }

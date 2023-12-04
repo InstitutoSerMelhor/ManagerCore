@@ -43,7 +43,7 @@ public class AuthenticationController {
   }
 
   @PostMapping("/register")
-  public ResponseEntity<AuthResponseDto> saveUser(@RequestBody UserCreationDto userData) {
+  public ResponseEntity<AuthResponseDto> saveUser(@RequestBody @Valid UserCreationDto userData) {
     User newUser = userService.saveUser(userData.toEntity());
     AuthResponseDto token = new AuthResponseDto(tokenService.generateToken(newUser));
     return ResponseEntity.status(HttpStatus.CREATED).body(token);
@@ -73,9 +73,7 @@ public class AuthenticationController {
 
       return ResponseEntity.status(HttpStatus.OK).body(token);
     } catch (InternalAuthenticationServiceException | BadCredentialsException e) {
-      throw new BadRequestException(e.getMessage());
-//      throw new BadRequestException("Username or password incorrect");
-
+      throw new BadRequestException("Email or password incorrect");
     }
   }
 }

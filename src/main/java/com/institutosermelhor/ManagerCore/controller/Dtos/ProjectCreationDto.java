@@ -2,7 +2,22 @@ package com.institutosermelhor.ManagerCore.controller.Dtos;
 
 import com.institutosermelhor.ManagerCore.models.entity.Project;
 
-public record ProjectCreationDto(String name, String description, String area) {
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
+
+public record ProjectCreationDto(
+  @NotNull(message = "Name must be provided")
+  @NotEmpty(message = "Name cannot be empty")
+  String name, 
+  @NotNull(message = "Description must be provided")
+  @NotEmpty(message = "Description cannot be empty")
+  @Size(min = 200, message = "Description must have at least 200 characteres.")
+  String description, 
+  @NotNull(message = "Area must be provided")
+  @NotEmpty(message = "Area cannot be empty")
+  String area
+  ) {
 
   public Project toEntity() {
     return Project.builder().name(name).description(description).area(area).build();
