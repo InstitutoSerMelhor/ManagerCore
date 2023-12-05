@@ -3,6 +3,8 @@ package com.institutosermelhor.ManagerCore.controller.validade.custom;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
+import com.auth0.jwt.interfaces.Payload;
+
 import static java.lang.annotation.ElementType.METHOD;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
@@ -14,7 +16,7 @@ import jakarta.validation.Constraint;
 public @interface PDFTester {
     String message() default "File type not supported. Accept only PDF.";
 
-    // Class<?>[] groups() default {};
+    Class<?>[] groups() default {};
 
-    // Class<? extends Payload>[] payload() default {};
+    Class<? extends Payload>[] payload() default {};
 }
