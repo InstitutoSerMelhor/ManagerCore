@@ -7,15 +7,15 @@ import com.institutosermelhor.ManagerCore.controller.validade.custom.PDFTester;
 import com.institutosermelhor.ManagerCore.util.ReportType;
 
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
-import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 
 public record ReportCreationDTO(
         @RequestParam 
         @NotNull(message = "Name must be provided")
         @NotEmpty(message = "Name cannot be empty")
-        @Min(value=3, message = "Name must have at least 3 characteres")
+        @Size(min=3, message = "Name must have at least 3 characteres")
         String name, 
         @RequestParam(name = "type")
         @NotNull
