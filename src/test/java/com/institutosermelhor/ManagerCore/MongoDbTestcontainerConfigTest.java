@@ -27,7 +27,7 @@ public class MongoDbTestcontainerConfigTest {
     }
 
     @Test
-    @DisplayName("Test container is healthy")
+    @DisplayName("test container is healthy")
     void testContainerisHealthy() {
         assert mongoDBContainer.isCreated();
         assert mongoDBContainer.isRunning();
