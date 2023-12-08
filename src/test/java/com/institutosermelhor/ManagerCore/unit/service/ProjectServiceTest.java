@@ -111,12 +111,4 @@ public class ProjectServiceTest {
     assertThrows(NotFoundException.class,
         () -> projectService.update("invalidId123", projectMock.giveMeAProject()));
   }
-
-  @Test
-  @DisplayName("getProject method when user collection has a project return this project")
-  void testApiEndpoint8() {
-    Mockito.when(projectService.findById(eq(projectMock.giveMeAProject().getId())))
-        .thenReturn(projectMock.giveMeAProject());
-
-  }
 }

@@ -23,6 +23,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class ReportService {
+
   private final GridFsTemplate gridFsTemplate;
   private final GridFsOperations gridFsOperations;
   private final ReportRepository repository;
@@ -37,23 +38,23 @@ public class ReportService {
 
   public String saveFile(ReportCreationDTO newReport)
       throws IOException {
-
     if (repository.findByName(newReport.name()) != null) {
       throw new ConflictException("File name already exists");
     }
     DBObject metadata = new BasicDBObject();
-        metadata.put("fileSize", newReport.reportType().getSize());
+    metadata.put("fileSize", newReport.pdfFile().getSize());
 
-        Object fileID = gridFsTemplate.store(newReport.reportType().getInputStream(),
-        newReport.reportType().getOriginalFilename(), 
-        newReport.reportType().getContentType(), metadata);
-        Report report = Report.builder().id(fileID.toString()).name(newReport.name()).reportType(newReport.fileName())
-            .build();
+    Object fileID = gridFsTemplate.store(newReport.pdfFile().getInputStream(),
+        newReport.pdfFile().getOriginalFilename(),
+        newReport.pdfFile().getContentType(), metadata);
+    Report report = Report.builder().id(fileID.toString()).name(newReport.name())
+        .reportType(newReport.reportType())
+        .build();
 
-        repository.save(report);
+    repository.save(report);
 
-      return report.getId().toString();
-    }
+    return report.getId();
+  }
 
 
   public ReportDownloadDto getFileById(String id) throws IOException {
@@ -68,7 +69,6 @@ public class ReportService {
 
     return new ReportDownloadDto(gridFSFile.getFilename(),
         gridFSFile.getMetadata().get("_contentType").toString(),
-        gridFSFile.getMetadata().get("fileSize").toString(),
         IOUtils.toByteArray(gridFsOperations.getResource(gridFSFile).getInputStream()));
   }
 
@@ -76,7 +76,7 @@ public class ReportService {
     return repository.findByIsEnabledTrue();
   }
 
-  public List<Report> getReportByType(ReportType reportType) {
+  public List<Report> getReportsByType(ReportType reportType) {
     return repository.findByReportType(reportType);
   }
 
