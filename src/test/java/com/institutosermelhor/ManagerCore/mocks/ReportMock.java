@@ -29,4 +29,10 @@ public class ReportMock {
   public ReportUpdateDto giveMeAUpdateDto() {
     return new ReportUpdateDto("New Report name", ReportType.PROJECT);
   }
+
+  public ReportCreationDto giveMeACreationDto() {
+    MockMultipartFile pdfFile = new MockMultipartFile("pdfFile", "Balance Report.pdf",
+        "application/pdf", "balanceReportData".getBytes());
+    return new ReportCreationDto("Balance Report", ReportType.BALANCE, pdfFile);
+  }
 }
