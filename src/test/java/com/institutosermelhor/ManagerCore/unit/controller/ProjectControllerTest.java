@@ -80,6 +80,8 @@ class ProjectControllerTest extends MongoDbTestcontainerConfigTest {
         .andExpect(jsonPath("$[0].name").value(projectMock.giveMeAProject().getName()))
         .andExpect(
             jsonPath("$[0].description").value(projectMock.giveMeAProject().getDescription()))
+        .andExpect(
+            jsonPath("$[0].description").value(projectMock.giveMeAProject().getDescription()))
         .andExpect(jsonPath("$[0].area").value(projectMock.giveMeAProject().getArea()));
 
     Mockito.verify(projectService).getProjects();
