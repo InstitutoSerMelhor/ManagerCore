@@ -21,5 +21,4 @@ public class PDFValidator implements ConstraintValidator<PDFTester, MultipartFil
       return false;
     }
   }
-
 }

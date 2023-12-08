@@ -1,5 +1,6 @@
 package com.institutosermelhor.ManagerCore.controller.validade.custom;
 
+
 import jakarta.validation.Payload;
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;

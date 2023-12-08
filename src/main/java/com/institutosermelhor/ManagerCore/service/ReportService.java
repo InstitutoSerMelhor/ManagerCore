@@ -1,6 +1,6 @@
 package com.institutosermelhor.ManagerCore.service;
 
-import com.institutosermelhor.ManagerCore.controller.Dtos.ReportCreationDto;
+import com.institutosermelhor.ManagerCore.controller.Dtos.ReportCreationDTO;
 import com.institutosermelhor.ManagerCore.controller.Dtos.ReportDownloadDto;
 import com.institutosermelhor.ManagerCore.controller.Dtos.ReportUpdateDto;
 import com.institutosermelhor.ManagerCore.infra.exception.ConflictException;
@@ -36,7 +36,7 @@ public class ReportService {
     this.repository = repository;
   }
 
-  public String saveFile(ReportCreationDto newReport)
+  public String saveFile(ReportCreationDTO newReport)
       throws IOException {
     if (repository.findByName(newReport.name()) != null) {
       throw new ConflictException("File name already exists");
