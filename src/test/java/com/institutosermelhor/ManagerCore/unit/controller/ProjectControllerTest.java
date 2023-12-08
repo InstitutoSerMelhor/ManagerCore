@@ -37,7 +37,7 @@ class ProjectControllerTest {
   private ProjectMock projectMock;
 
   @Test
-  @DisplayName("getProjects method when user collection is empty return an empty list")
+  @DisplayName("getProjects method when project collection is empty return an empty list")
   void testApiEndpoint() throws Exception {
     Mockito.when(projectService.getProjects()).thenReturn(List.of());
 
@@ -48,7 +48,7 @@ class ProjectControllerTest {
   }
 
   @Test
-  @DisplayName("getProjects method when user collection has projects returns projects list")
+  @DisplayName("getProjects method when project collection has projects returns projects list")
   void testApiEndpoint2() throws Exception {
     Mockito.when(projectService.getProjects()).thenReturn(List.of(projectMock.giveMeAProject()));
 
@@ -57,7 +57,8 @@ class ProjectControllerTest {
         .andExpect(jsonPath("$", hasSize(1)))
         .andExpect(jsonPath("$[0].id").isNotEmpty())
         .andExpect(jsonPath("$[0].name").value(projectMock.giveMeAProject().getName()))
-        .andExpect(jsonPath("$[0].description").value(projectMock.giveMeAProject().getDescription()))
+        .andExpect(
+            jsonPath("$[0].description").value(projectMock.giveMeAProject().getDescription()))
         .andExpect(jsonPath("$[0].area").value(projectMock.giveMeAProject().getArea()));
 
     Mockito.verify(projectService).getProjects();
@@ -67,7 +68,8 @@ class ProjectControllerTest {
   @DisplayName("delete method when delete a project returns no content")
   @WithMockUser(authorities = {"ADMIN"})
   void testApiEndpoint3() throws Exception {
-    mockMvc.perform(MockMvcRequestBuilders.delete("/projects/" + projectMock.giveMeAProject().getId()))
+    mockMvc.perform(
+            MockMvcRequestBuilders.delete("/projects/" + projectMock.giveMeAProject().getId()))
         .andExpect(status().isNoContent());
 
     Mockito.verify(projectService).delete(projectMock.giveMeAProject().getId());
@@ -88,7 +90,8 @@ class ProjectControllerTest {
             .content(new ObjectMapper().writeValueAsString(projectToUpdate)))
         .andExpect(status().isNoContent());
 
-    Mockito.verify(projectService).update(projectMock.giveMeAProject().getId(), projectToUpdate.toEntity());
+    Mockito.verify(projectService)
+        .update(projectMock.giveMeAProject().getId(), projectToUpdate.toEntity());
   }
 
   @Test

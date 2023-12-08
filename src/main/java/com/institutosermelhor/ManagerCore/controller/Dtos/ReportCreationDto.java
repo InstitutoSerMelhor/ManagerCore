@@ -1,5 +1,6 @@
 package com.institutosermelhor.ManagerCore.controller.Dtos;
 
+import jakarta.validation.constraints.Size;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -11,18 +12,18 @@ import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 
-public record ReportCreationDTO(
-        @RequestParam 
-        @NotNull(message = "Name must be provided")
-        @NotEmpty(message = "Name cannot be empty")
-        @Min(value=3, message = "Name must have at least 3 characteres")
-        String name, 
-        @RequestParam(name = "type")
-        @NotNull
-        ReportType fileName,
-        @RequestBody
-        @NotNull
-        @PDFTester
-        MultipartFile reportType
-        ) {
-    }
+public record ReportCreationDto(
+    @RequestParam
+    @NotNull(message = "Name must be provided")
+    @NotEmpty(message = "Name cannot be empty")
+    @Size(min = 3, message = "Name must have at least 3 characteres")
+    String name,
+    @RequestParam(name = "type")
+    @NotNull
+    ReportType reportType,
+    @RequestParam
+    @PDFTester
+    MultipartFile pdfFile
+) {
+
+}

@@ -1,6 +1,6 @@
 package com.institutosermelhor.ManagerCore.controller;
 
-import com.institutosermelhor.ManagerCore.controller.Dtos.ReportCreationDTO;
+import com.institutosermelhor.ManagerCore.controller.Dtos.ReportCreationDto;
 import com.institutosermelhor.ManagerCore.controller.Dtos.ReportDownloadDto;
 import com.institutosermelhor.ManagerCore.controller.Dtos.ReportDto;
 import com.institutosermelhor.ManagerCore.controller.Dtos.ReportUpdateDto;
@@ -14,6 +14,7 @@ import jakarta.validation.Valid;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpHeaders;
@@ -47,8 +48,8 @@ public class ReportController {
   @SecurityRequirement(name = "bearerAuth")
   @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
   public ResponseEntity<Map<String, String>> saveFile(
-    @Valid ReportCreationDTO newReport
-    )  throws Exception {
+      @Valid ReportCreationDto newReport
+  ) throws Exception {
     String fileId = service.saveFile(newReport);
     return ResponseEntity.status(HttpStatus.CREATED).body(Map.of("fileId", fileId));
   }
@@ -58,17 +59,18 @@ public class ReportController {
       throws IOException {
     ReportDownloadDto report = service.getFileById(id);
     return ResponseEntity.ok()
-        .contentType(MediaType.parseMediaType(report.type()))
+        .contentType(MediaType.parseMediaType(report.contentType()))
         .header(HttpHeaders.CONTENT_DISPOSITION,
             "attachment; filename=\"" + report.name() + "\"")
         .body(new ByteArrayResource(report.data()));
   }
 
   @GetMapping()
-  public ResponseEntity<List<ReportDto>> getReports(@RequestParam("type") ReportType reportType) {
+  public ResponseEntity<List<ReportDto>> getReports(
+      @RequestParam("type") Optional<ReportType> reportType) {
     List<Report> reports;
-    if (reportType != null) {
-      reports = service.getReportByType(reportType);
+    if (reportType.isPresent()) {
+      reports = service.getReportsByType(reportType.get());
     } else {
       reports = service.getReports();
     }
@@ -89,7 +91,8 @@ public class ReportController {
   @Secured("ADMIN")
   @SecurityRequirement(name = "bearerAuth")
   @PutMapping("/{id}")
-  public ResponseEntity<Void> update(@PathVariable String id, @RequestBody @Valid ReportUpdateDto report) {
+  public ResponseEntity<Void> update(@PathVariable String id,
+      @RequestBody @Valid ReportUpdateDto report) {
     service.update(id, report);
     return ResponseEntity.noContent().build();
   }
