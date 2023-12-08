@@ -4,6 +4,8 @@ import com.institutosermelhor.ManagerCore.infra.security.Role;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
+import lombok.Data;
+import lombok.Getter;
 
 public record UserDto(
         String id,
@@ -15,4 +17,5 @@ public record UserDto(
         String email,
         @NotEmpty
         Role role
-) {}
+) {
+}
