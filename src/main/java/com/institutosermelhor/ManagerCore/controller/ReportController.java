@@ -1,5 +1,6 @@
 package com.institutosermelhor.ManagerCore.controller;
 
+import com.institutosermelhor.ManagerCore.controller.Dtos.ReportCreationDTO;
 import com.institutosermelhor.ManagerCore.controller.Dtos.ReportDownloadDto;
 import com.institutosermelhor.ManagerCore.controller.Dtos.ReportDto;
 import com.institutosermelhor.ManagerCore.controller.Dtos.ReportUpdateDto;
@@ -8,6 +9,8 @@ import com.institutosermelhor.ManagerCore.service.ReportService;
 import com.institutosermelhor.ManagerCore.util.ReportType;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
+
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
@@ -23,10 +26,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/reports")
@@ -43,10 +46,10 @@ public class ReportController {
   @Secured("ADMIN")
   @SecurityRequirement(name = "bearerAuth")
   @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-  public ResponseEntity<Map<String, String>> saveFile(@RequestParam String name,
-      @RequestParam("type") ReportType reportType,
-      @RequestParam MultipartFile file) throws Exception {
-    String fileId = service.saveFile(name, reportType, file);
+  public ResponseEntity<Map<String, String>> saveFile(
+    @Valid ReportCreationDTO newReport
+    )  throws Exception {
+    String fileId = service.saveFile(newReport);
     return ResponseEntity.status(HttpStatus.CREATED).body(Map.of("fileId", fileId));
   }
 
@@ -86,7 +89,7 @@ public class ReportController {
   @Secured("ADMIN")
   @SecurityRequirement(name = "bearerAuth")
   @PutMapping("/{id}")
-  public ResponseEntity<Void> update(@PathVariable String id, ReportUpdateDto report) {
+  public ResponseEntity<Void> update(@PathVariable String id, @RequestBody @Valid ReportUpdateDto report) {
     service.update(id, report);
     return ResponseEntity.noContent().build();
   }
