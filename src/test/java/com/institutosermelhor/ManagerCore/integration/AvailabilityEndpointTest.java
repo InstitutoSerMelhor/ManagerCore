@@ -27,7 +27,7 @@ public class AvailabilityEndpointTest extends MongoDbTestcontainerConfigTest {
         mockMvc.perform(MockMvcRequestBuilders.post("/register")).andExpect(status().is4xxClientError());
         mockMvc.perform(MockMvcRequestBuilders.post("/login")).andExpect(status().is4xxClientError());
     }
-
+    // Vai ser refeito, teste abaixo não está corretamente testando se esses métodos estão realmente protegidos.
     @Test
     @DisplayName("endpoints that should be private(throw unauthorized exception if you're not logged)")
     void testEndpoint2() throws Exception {
