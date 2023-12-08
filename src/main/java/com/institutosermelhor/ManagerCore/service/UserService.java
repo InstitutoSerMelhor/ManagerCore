@@ -61,7 +61,7 @@ public class UserService implements UserDetailsService {
   public void update(String userId, User user, String userEmail) {
     User userToUpdate = this.findById(userId);
     if (!Objects.equals(userToUpdate.getEmail(), userEmail)) {
-      throw new UnauthorizedException();
+      throw new UnauthorizedException("Invalid data!");
     }
 
     String passwordHashed = new BCryptPasswordEncoder().encode(user.getPassword());
@@ -75,9 +75,8 @@ public class UserService implements UserDetailsService {
   public void delete(String userId, String userEmail) {
     User user = this.findById(userId);
     if (!Objects.equals(user.getEmail(), userEmail)) {
-      throw new UnauthorizedException();
+      throw new UnauthorizedException("Invalid data!");
     }
-
     user.setEnabled(false);
     repository.save(user);
   }

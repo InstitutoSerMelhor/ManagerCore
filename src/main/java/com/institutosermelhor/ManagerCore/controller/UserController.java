@@ -7,6 +7,8 @@ import com.institutosermelhor.ManagerCore.service.UserService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
+
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -54,15 +56,16 @@ public class UserController {
   public ResponseEntity<Void> delete(@PathVariable String userId,
       @AuthenticationPrincipal UserDetails userDetails) {
     service.delete(userId, userDetails.getUsername());
-
     return ResponseEntity.noContent().build();
   }
 
   @PutMapping("{userId}")
-  public ResponseEntity<UserDto> update(@PathVariable String userId,
-      @RequestBody UserCreationDto userData, @AuthenticationPrincipal UserDetails userDetails) {
+  public ResponseEntity<Void> update(
+          @PathVariable String userId,
+          @Valid @RequestBody UserCreationDto userData,
+          @AuthenticationPrincipal UserDetails userDetails
+  ) {
     service.update(userId, userData.toEntity(), userDetails.getUsername());
-
     return ResponseEntity.noContent().build();
   }
 }

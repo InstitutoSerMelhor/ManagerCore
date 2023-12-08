@@ -15,7 +15,7 @@ import org.springframework.security.core.AuthenticationException;
 import java.util.List;
 
 @ControllerAdvice
-public class ManagerException {
+public class ExceptionManager {
 
   @ExceptionHandler(NotFoundException.class)
   public ResponseEntity<ErrorBody> handleNotFound(NotFoundException ex) {

@@ -2,7 +2,6 @@ package com.institutosermelhor.ManagerCore.controller.Dtos;
 
 import com.institutosermelhor.ManagerCore.util.ReportType;
 
-import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;

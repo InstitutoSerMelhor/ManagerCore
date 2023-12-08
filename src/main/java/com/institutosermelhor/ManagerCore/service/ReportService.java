@@ -59,7 +59,7 @@ public class ReportService {
 
   public ReportDownloadDto getFileById(String id) throws IOException {
     Report report = repository.findById(id)
-        .orElseThrow(() -> new NotFoundException("File not found"));
+        .orElseThrow(() -> new NotFoundException("File not found!"));
 
     GridFSFile gridFSFile = gridFsTemplate.findOne(new Query(Criteria.where("_id").is(id)));
 

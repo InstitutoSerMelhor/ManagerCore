@@ -1,16 +1,14 @@
 package com.institutosermelhor.ManagerCore.controller.Dtos;
 
-import jakarta.validation.constraints.Size;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.institutosermelhor.ManagerCore.controller.validade.custom.PDFTester;
+import com.institutosermelhor.ManagerCore.util.customValidators.PDFTester;
 import com.institutosermelhor.ManagerCore.util.ReportType;
 
-import io.swagger.v3.oas.annotations.parameters.RequestBody;
-import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 
 public record ReportCreationDto(
     @RequestParam
