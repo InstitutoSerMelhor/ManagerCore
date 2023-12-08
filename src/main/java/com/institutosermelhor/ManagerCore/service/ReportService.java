@@ -1,8 +1,8 @@
 package com.institutosermelhor.ManagerCore.service;
 
+import com.institutosermelhor.ManagerCore.controller.Dtos.ReportCreationDTO;
 import com.institutosermelhor.ManagerCore.controller.Dtos.ReportDownloadDto;
 import com.institutosermelhor.ManagerCore.controller.Dtos.ReportUpdateDto;
-import com.institutosermelhor.ManagerCore.infra.exception.BadRequestException;
 import com.institutosermelhor.ManagerCore.infra.exception.ConflictException;
 import com.institutosermelhor.ManagerCore.infra.exception.NotFoundException;
 import com.institutosermelhor.ManagerCore.models.entity.Report;
@@ -13,7 +13,6 @@ import com.mongodb.DBObject;
 import com.mongodb.client.gridfs.model.GridFSFile;
 import java.io.IOException;
 import java.util.List;
-import java.util.Objects;
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -21,7 +20,6 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.gridfs.GridFsOperations;
 import org.springframework.data.mongodb.gridfs.GridFsTemplate;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
 @Service
 public class ReportService {
@@ -37,27 +35,24 @@ public class ReportService {
     this.repository = repository;
   }
 
-  public String saveFile(String name, ReportType reportType, MultipartFile file)
+  public String saveFile(ReportCreationDTO newReport)
       throws IOException {
-    if (!Objects.equals(file.getContentType(), "application/pdf")) {
-      throw new BadRequestException("File type not supported");
+    if (repository.findByName(newReport.name()) != null) {
+      throw new ConflictException("File name already exists");
     }
-
-    if (repository.findByName(name) != null) {
-      throw new ConflictException("File name already exists!");
-    }
-
     DBObject metadata = new BasicDBObject();
-    metadata.put("fileSize", file.getSize());
+        metadata.put("fileSize", newReport.reportType().getSize());
 
-    Object fileID = gridFsTemplate.store(file.getInputStream(), file.getOriginalFilename(),
-        file.getContentType(), metadata);
-    Report report = Report.builder().id(fileID.toString()).name(name).reportType(reportType)
-        .build();
-    repository.save(report);
+        Object fileID = gridFsTemplate.store(newReport.reportType().getInputStream(),
+        newReport.reportType().getOriginalFilename(), 
+        newReport.reportType().getContentType(), metadata);
+        Report report = Report.builder().id(fileID.toString()).name(newReport.name()).reportType(newReport.fileName())
+            .build();
 
-    return fileID.toString();
-  }
+        repository.save(report);
+
+      return report.getId().toString();
+    }
 
 
   public ReportDownloadDto getFileById(String id) throws IOException {

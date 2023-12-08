@@ -60,7 +60,7 @@ public class UserController {
   }
 
   @PutMapping("{userId}")
-  public ResponseEntity<UserDto> update(
+  public ResponseEntity<Void> update(
           @PathVariable String userId,
           @Valid @RequestBody UserCreationDto userData,
           @AuthenticationPrincipal UserDetails userDetails
