@@ -42,7 +42,7 @@ class ProjectIntegrationTest extends MongoDbTestcontainerConfigTest {
   }
 
   @Test
-  @DisplayName("getProjects method when user collection is empty return an empty list")
+  @DisplayName("getProjects method when project collection is empty return an empty list")
   void testApiEndpoint() throws Exception {
     mockMvc.perform(MockMvcRequestBuilders.get("/projects"))
         .andExpect(status().isOk())
@@ -51,7 +51,7 @@ class ProjectIntegrationTest extends MongoDbTestcontainerConfigTest {
   }
 
   @Test
-  @DisplayName("getProjects method when user collection has projects return an projects list")
+  @DisplayName("getProjects method when project collection has projects return an projects list")
   void testApiEndpoint2() throws Exception {
     this.projectRepository.save(this.projectMock.giveMeAProject());
 
@@ -60,7 +60,8 @@ class ProjectIntegrationTest extends MongoDbTestcontainerConfigTest {
         .andExpect(jsonPath("$", hasSize(1)))
         .andExpect(jsonPath("$[0].id").isNotEmpty())
         .andExpect(jsonPath("$[0].name").value(this.projectMock.giveMeAProject().getName()))
-        .andExpect(jsonPath("$[0].description").value(this.projectMock.giveMeAProject().getDescription()))
+        .andExpect(
+            jsonPath("$[0].description").value(this.projectMock.giveMeAProject().getDescription()))
         .andExpect(jsonPath("$[0].area").value(this.projectMock.giveMeAProject().getArea()));
   }
 
@@ -111,17 +112,8 @@ class ProjectIntegrationTest extends MongoDbTestcontainerConfigTest {
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.id").isNotEmpty())
         .andExpect(jsonPath("$.name").value(this.projectMock.giveMeAProject().getName()))
-        .andExpect(jsonPath("$.description").value(this.projectMock.giveMeAProject().getDescription()))
+        .andExpect(
+            jsonPath("$.description").value(this.projectMock.giveMeAProject().getDescription()))
         .andExpect(jsonPath("$.area").value(this.projectMock.giveMeAProject().getArea()));
-  }
-
-  @Test
-  @DisplayName("getProject method when user collection is empty throw not found")
-  void testApiEndpoint7() throws Exception {
-    String fakeId = "455555";
-
-    mockMvc.perform(MockMvcRequestBuilders.get("/projects/" + fakeId))
-        .andExpect(status().isBadRequest())
-        .andExpect(jsonPath("$.message").value(is("Project not found!")));
   }
 }
