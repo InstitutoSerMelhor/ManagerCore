@@ -1,9 +1,9 @@
 package com.institutosermelhor.ManagerCore.controller.Dtos;
 
+import com.institutosermelhor.ManagerCore.controller.Dtos.customValidators.PDFTester;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.institutosermelhor.ManagerCore.util.customValidators.PDFTester;
 import com.institutosermelhor.ManagerCore.util.ReportType;
 
 import jakarta.validation.constraints.NotEmpty;

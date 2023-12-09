@@ -4,7 +4,6 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -29,7 +28,6 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.web.multipart.MultipartFile;
 
 @SpringBootTest
 @SpringJUnitConfig
@@ -133,10 +131,7 @@ public class ReportControllerTest {
   @DisplayName("saveFile method should throw bad request if file content type is not PDF")
   @WithMockUser(authorities = {"ADMIN"})
   void testApiEndpoint7() throws Exception {
-    Mockito.when(reportService.saveFile(any(ReportCreationDto.class)))
-        .thenReturn("fileId123");
-
-    MockMultipartFile pdfFile = new MockMultipartFile("pdfFile", "Balance Report.pdf",
+    MockMultipartFile pdfFile = new MockMultipartFile("pdfFile", "Balance Report.txt",
         "text/plain", "balanceReportData".getBytes());
 
     mockMvc.perform(MockMvcRequestBuilders.multipart(

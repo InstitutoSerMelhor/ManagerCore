@@ -1,4 +1,4 @@
-package com.institutosermelhor.ManagerCore.controller.validade.custom;
+package com.institutosermelhor.ManagerCore.controller.Dtos.customValidators;
 
 
 import jakarta.validation.Payload;
