@@ -3,6 +3,9 @@ package com.institutosermelhor.ManagerCore.integration;
 import static org.hamcrest.Matchers.is;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
@@ -51,10 +54,14 @@ class AuthenticationControllerTest extends MongoDbTestcontainerConfigTest {
     }
 
     @Test
-    @DisplayName("Test if Admin is sigin up in aplication")
+    @DisplayName("Testing endpoint and if Admin is sigin up in aplication and his return is created and your values")
     @WithMockUser(authorities = {"ADMIN"})
     void testSaveAdmin() throws Exception{
-        UserCreationDto newUserAdmin = new UserCreationDto("New Name", "new.email@gmail.com", "NewPass123@");
+        final String name = "New Name";
+        final String email = "new.email@gmail.com";
+        final String password = "NewPass123@";
+
+        UserCreationDto newUserAdmin = new UserCreationDto(name, email, password);
 
         // Verify end point user admin:
         mockMvc.perform(
@@ -72,15 +79,23 @@ class AuthenticationControllerTest extends MongoDbTestcontainerConfigTest {
         //Verify if user admin is registered correcly:
         User userCreated = userRepository.findAll().get(0);
 
+        Matcher matcherId = Pattern.compile("[a-z0-9]{24}").matcher(userCreated.getId());
+        Matcher matcherPassEncode = Pattern.compile("\\A\\$2(a|y|b)?\\$(\\d\\d)\\$[./0-9A-Za-z]{53}").matcher(userCreated.getPassword());
+
         Assertions.assertNotNull(userCreated.getId());
+        Assertions.assertEquals(true, matcherId.find());
+
         Assertions.assertEquals(Role.ADMIN, userCreated.getRole());
-        Assertions.assertEquals(true, encoder.matches("NewPass123@", userCreated.getPassword()));
-        Assertions.assertEquals("New Name", userCreated.getName());
-        Assertions.assertEquals("new.email@gmail.com", userCreated.getEmail());
+
+        Assertions.assertEquals(true, encoder.matches(password, userCreated.getPassword()));
+        Assertions.assertEquals(true, matcherPassEncode.find());
+
+        Assertions.assertEquals(name, userCreated.getName());
+        Assertions.assertEquals(email, userCreated.getEmail());
     }
 
     @Test
-    @DisplayName("Test if Admin endpoint conflits with another registered email")
+    @DisplayName("Test if Admin endpoint conflits with another registered email, returning client error (400)")
     @WithMockUser(authorities = {"ADMIN"})
     void testSaveAdminErro() throws Exception{
         UserCreationDto newUserAdmin = new UserCreationDto("New Name", "new.email@gmail.com", "NewPass123@");
@@ -97,7 +112,7 @@ class AuthenticationControllerTest extends MongoDbTestcontainerConfigTest {
     }
 
     @Test
-    @DisplayName("Test if normal user try use endpoint save admin")
+    @DisplayName("Test if normal user try use endpoint save admin and his return is erro client (400)")
     @WithMockUser(authorities = {"USER"})
     void testBlockUserRole() throws Exception{
         UserCreationDto newUserAdmin = new UserCreationDto("New Name", "new.email@gmail.com", "NewPass123@");
