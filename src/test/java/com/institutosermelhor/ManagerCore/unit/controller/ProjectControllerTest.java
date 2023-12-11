@@ -20,6 +20,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import java.util.List;
 
 import static org.hamcrest.Matchers.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -70,25 +71,72 @@ class ProjectControllerTest extends MongoDbTestcontainerConfigTest {
   @DisplayName("save method when creating a project returns the project created")
   @WithMockUser(authorities = {"ADMIN"})
   void testApiEndpoint3() throws Exception {
-    Mockito.when(projectService.save((Project) any(Project.class)))
+    Mockito.when(projectService.save(any(Project.class)))
         .thenReturn(projectMock.giveMeAProject());
 
-    mockMvc.perform(MockMvcRequestBuilders.get("/projects"))
-        .andExpect(status().isOk())
-        .andExpect(jsonPath("$", hasSize(1)))
-        .andExpect(jsonPath("$[0].id").isNotEmpty())
-        .andExpect(jsonPath("$[0].name").value(projectMock.giveMeAProject().getName()))
+    mockMvc.perform(MockMvcRequestBuilders.post("/projects")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(new ObjectMapper().writeValueAsString(projectMock.giveMeAProject())))
+        .andExpect(status().isCreated())
+        .andExpect(jsonPath("$.id").isNotEmpty())
+        .andExpect(jsonPath("$.name").value(projectMock.giveMeAProject().getName()))
         .andExpect(
-            jsonPath("$[0].description").value(projectMock.giveMeAProject().getDescription()))
-        .andExpect(jsonPath("$[0].area").value(projectMock.giveMeAProject().getArea()));
+            jsonPath("$.description").value(projectMock.giveMeAProject().getDescription()))
+        .andExpect(jsonPath("$.area").value(projectMock.giveMeAProject().getArea()));
 
-    Mockito.verify(projectService).getProjects();
+    Mockito.verify(projectService).save(any(Project.class));
+  }
+
+  @Test
+  @DisplayName("save method should throw a bad request if name is empty")
+  @WithMockUser(authorities = {"ADMIN"})
+  void testApiEndpoint4() throws Exception {
+    ProjectCreationDto projectCreationDto = new ProjectCreationDto(
+        "", "A".repeat(200), "Area");
+
+    mockMvc.perform(MockMvcRequestBuilders.post("/projects")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(new ObjectMapper().writeValueAsString(projectCreationDto)))
+        .andExpect(status().isBadRequest())
+        .andExpect(jsonPath("$[0].field").value("name"))
+        .andExpect(jsonPath("$[0].mensage").value("Name cannot be empty"));
+  }
+
+  @Test
+  @DisplayName("save method should throw a bad request if description has less than 200 characters")
+  @WithMockUser(authorities = {"ADMIN"})
+  void testApiEndpoint5() throws Exception {
+    ProjectCreationDto projectCreationDto = new ProjectCreationDto(
+        "Name", "A".repeat(100), "Area");
+
+    mockMvc.perform(MockMvcRequestBuilders.post("/projects")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(new ObjectMapper().writeValueAsString(projectCreationDto)))
+        .andExpect(status().isBadRequest())
+        .andExpect(jsonPath("$[0].field").value("description"))
+        .andExpect(jsonPath("$[0].mensage")
+            .value("Description must have at least 200 characteres."));
+  }
+
+  @Test
+  @DisplayName("save method should throw a bad request if area is empty")
+  @WithMockUser(authorities = {"ADMIN"})
+  void testApiEndpoint6() throws Exception {
+    ProjectCreationDto projectCreationDto = new ProjectCreationDto(
+        "Name", "A".repeat(200), "");
+
+    mockMvc.perform(MockMvcRequestBuilders.post("/projects")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(new ObjectMapper().writeValueAsString(projectCreationDto)))
+        .andExpect(status().isBadRequest())
+        .andExpect(jsonPath("$[0].field").value("area"))
+        .andExpect(jsonPath("$[0].mensage").value("Area cannot be empty"));
   }
 
   @Test
   @DisplayName("delete method when delete a project returns no content")
   @WithMockUser(authorities = {"ADMIN"})
-  void testApiEndpoint4() throws Exception {
+  void testApiEndpoint7() throws Exception {
     mockMvc.perform(
             MockMvcRequestBuilders.delete("/projects/" + projectMock.giveMeAProject().getId()))
         .andExpect(status().isNoContent());
@@ -99,7 +147,7 @@ class ProjectControllerTest extends MongoDbTestcontainerConfigTest {
   @Test
   @DisplayName("update method when update project data return project no content")
   @WithMockUser(authorities = {"ADMIN"})
-  void testApiEndpoint5() throws Exception {
+  void testApiEndpoint8() throws Exception {
     ProjectCreationDto projectToUpdate = new ProjectCreationDto(
         "New project name",
         "A".repeat(200),
@@ -117,7 +165,7 @@ class ProjectControllerTest extends MongoDbTestcontainerConfigTest {
 
   @Test
   @DisplayName("getProject method when user collection has a project return this project")
-  void testApiEndpoint6() throws Exception {
+  void testApiEndpoint9() throws Exception {
     Mockito.when(projectService.findById(eq(projectMock.giveMeAProject().getId())))
         .thenReturn(projectMock.giveMeAProject());
 
