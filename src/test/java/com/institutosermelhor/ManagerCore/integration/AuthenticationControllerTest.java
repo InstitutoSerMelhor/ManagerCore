@@ -1,6 +1,7 @@
 package com.institutosermelhor.ManagerCore.integration;
 
 import static org.hamcrest.Matchers.is;
+import static org.mockito.Answers.values;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import java.util.regex.Matcher;
@@ -14,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
@@ -22,6 +24,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.institutosermelhor.ManagerCore.MongoDbTestcontainerConfigTest;
+import com.institutosermelhor.ManagerCore.controller.Dtos.AuthDto;
 import com.institutosermelhor.ManagerCore.controller.Dtos.UserCreationDto;
 import com.institutosermelhor.ManagerCore.infra.security.Role;
 import com.institutosermelhor.ManagerCore.models.entity.User;
@@ -46,6 +49,10 @@ class AuthenticationControllerTest extends MongoDbTestcontainerConfigTest {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private AuthenticationManager authenticationManager;
+
 
     
     @AfterEach
@@ -129,4 +136,43 @@ class AuthenticationControllerTest extends MongoDbTestcontainerConfigTest {
             .andExpect(header().string("Expires", "0"))
             .andExpect(jsonPath("$").value(is("Acesso negado")));
     }
+
+    @Test
+    @DisplayName("Test if user admin try login in application and return status 204 and token value")
+    @WithMockUser(authorities = {"ADIMN"})
+    void testAdminLogin() throws Exception{
+        final String email = "new.email@gmail.com";
+        final String password = "NewPass123@";
+
+        UserCreationDto newUserAdmin = new UserCreationDto("New Name", email, password);
+
+        this.userService.saveAdmin(newUserAdmin.toEntity());
+
+        AuthDto userLogin = new AuthDto(email, password);
+
+        mockMvc.perform(
+            MockMvcRequestBuilders.post("/login")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(new ObjectMapper().writeValueAsString(userLogin))
+        )
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.token").isNotEmpty());
+    }
+
+    // @Test
+    // @DisplayName("Test if user admin try login in application and return status 204 and token value")
+    // @WithMockUser(authorities = {"ADIMN"})
+    // void testAdminLogin() throws Exception{
+    //     UserCreationDto newUserAdmin = new UserCreationDto("New Name", "new.email@gmail.com", "NewPass123@");
+
+    //     User userInserted = this.userService.saveAdmin(newUserAdmin.toEntity());
+
+    //     mockMvc.perform(
+    //         MockMvcRequestBuilders.post("/login")
+    //         .contentType(MediaType.APPLICATION_JSON)
+    //         .content(new ObjectMapper().writeValueAsString(userInserted))
+    //     )
+    //     .andExpect(status().is4xxClientError())
+    //     .andExpect(jsonPath("$.message").value(is("mensage")));
+    // }
 }
