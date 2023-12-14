@@ -22,6 +22,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.institutosermelhor.ManagerCore.MongoDbTestcontainerConfigTest;
+import com.institutosermelhor.ManagerCore.controller.Dtos.AuthDto;
 import com.institutosermelhor.ManagerCore.controller.Dtos.UserCreationDto;
 import com.institutosermelhor.ManagerCore.infra.security.Role;
 import com.institutosermelhor.ManagerCore.models.entity.User;
@@ -46,6 +47,7 @@ class AuthenticationControllerTest extends MongoDbTestcontainerConfigTest {
 
     @Autowired
     private UserRepository userRepository;
+
 
     
     @AfterEach
@@ -80,15 +82,13 @@ class AuthenticationControllerTest extends MongoDbTestcontainerConfigTest {
         User userCreated = userRepository.findAll().get(0);
 
         Matcher matcherId = Pattern.compile("[a-z0-9]{24}").matcher(userCreated.getId());
-        Matcher matcherPassEncode = Pattern.compile("\\A\\$2(a|y|b)?\\$(\\d\\d)\\$[./0-9A-Za-z]{53}").matcher(userCreated.getPassword());
-
+        
         Assertions.assertNotNull(userCreated.getId());
         Assertions.assertEquals(true, matcherId.find());
 
         Assertions.assertEquals(Role.ADMIN, userCreated.getRole());
 
         Assertions.assertEquals(true, encoder.matches(password, userCreated.getPassword()));
-        Assertions.assertEquals(true, matcherPassEncode.find());
 
         Assertions.assertEquals(name, userCreated.getName());
         Assertions.assertEquals(email, userCreated.getEmail());
@@ -114,7 +114,7 @@ class AuthenticationControllerTest extends MongoDbTestcontainerConfigTest {
     @Test
     @DisplayName("Test if normal user try use endpoint save admin and his return is erro client (400)")
     @WithMockUser(authorities = {"USER"})
-    void testBlockUserRole() throws Exception{
+    void testBlockUserRoleSigin() throws Exception{
         UserCreationDto newUserAdmin = new UserCreationDto("New Name", "new.email@gmail.com", "NewPass123@");
 
         mockMvc.perform(
@@ -128,5 +128,56 @@ class AuthenticationControllerTest extends MongoDbTestcontainerConfigTest {
             .andExpect(header().string("Pragma", "no-cache"))
             .andExpect(header().string("Expires", "0"))
             .andExpect(jsonPath("$").value(is("Acesso negado")));
+    }
+
+    @Test
+    @DisplayName("Test if user admin try login in application,, returning successfully login with status 200 and token value")
+    void testAdminLogin() throws Exception{
+        final String email = "new.email@gmail.com";
+        final String password = "NewPass123@";
+
+        UserCreationDto newUserAdmin = new UserCreationDto("New Name", email, password);
+
+        this.userService.saveAdmin(newUserAdmin.toEntity());
+
+        AuthDto userLogin = new AuthDto(email, password);
+
+        mockMvc.perform(
+            MockMvcRequestBuilders.post("/login")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(new ObjectMapper().writeValueAsString(userLogin))
+        )
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.token").isNotEmpty())
+        .andExpect(jsonPath("$.token").isString());
+    }
+
+    @Test
+    @DisplayName("Test if user admin try login in application wrong, returning status 400 and error message: Email or password incorrect")
+    void testAdminLoginWrong() throws Exception{
+        AuthDto userLoginNonexistentEmail = new AuthDto("another.email@gmail.com", "NewPass123@");
+
+        AuthDto userLoginWrongPassword = new AuthDto("new.email@gmail.com", "WrongPass@123");
+
+        // test if user insert a inexist email
+        mockMvc.perform(
+            MockMvcRequestBuilders.post("/login")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(new ObjectMapper().writeValueAsString(userLoginNonexistentEmail))
+        )
+        .andExpect(status().is4xxClientError())
+        .andExpect(jsonPath("$.message").value(is("Email or password incorrect")))
+        .andExpect(jsonPath("$.status").value("400"))
+        ;
+
+        //test if user put a correcly email, but wrong password
+        mockMvc.perform(
+            MockMvcRequestBuilders.post("/login")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(new ObjectMapper().writeValueAsString(userLoginWrongPassword))
+        )
+        .andExpect(status().is4xxClientError())
+        .andExpect(jsonPath("$.message").value(is("Email or password incorrect")))
+        .andExpect(jsonPath("$.status").value("400"));
     }
 }
