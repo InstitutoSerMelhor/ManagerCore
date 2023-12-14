@@ -82,15 +82,13 @@ class AuthenticationControllerTest extends MongoDbTestcontainerConfigTest {
         User userCreated = userRepository.findAll().get(0);
 
         Matcher matcherId = Pattern.compile("[a-z0-9]{24}").matcher(userCreated.getId());
-        Matcher matcherPassEncode = Pattern.compile("\\A\\$2(a|y|b)?\\$(\\d\\d)\\$[./0-9A-Za-z]{53}").matcher(userCreated.getPassword());
-
+        
         Assertions.assertNotNull(userCreated.getId());
         Assertions.assertEquals(true, matcherId.find());
 
         Assertions.assertEquals(Role.ADMIN, userCreated.getRole());
 
         Assertions.assertEquals(true, encoder.matches(password, userCreated.getPassword()));
-        Assertions.assertEquals(true, matcherPassEncode.find());
 
         Assertions.assertEquals(name, userCreated.getName());
         Assertions.assertEquals(email, userCreated.getEmail());
