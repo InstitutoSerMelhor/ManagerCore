@@ -30,9 +30,13 @@ public class ApiGetUserLoadTest extends Simulation {
         //     return super.setUp(populationBuilders);
         // }
 
-        HttpProtocolBuild httpProtocol = http.baseUrl("https://gatling.io");
+        HttpProtocolBuild httpProtocol = http.baseUrl("http://localhost:8080");
 
-        ScenarioBuilder scn = scenario("Scenario"); 
+        ScenarioBuilder scn = scenario("SimlationGetRequest") // 7
+        .exec(http("request_1") // 8
+          .get("/users")) // 9
+        .pause(5); // 10
+     
 
         { 
         setUp(scn.injectOpen(atOnceUsers(1)).protocols(httpProtocol));
