@@ -1,8 +1,7 @@
-package com.institutosermelhor.perfomaceTest.userPerfomaceTest;
+package com.scala;
+// package com.institutosermelhor.ManagerCore;
 
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
-// import io.gatling.core.*;
+import io.gatling.core.*;
 import io.gatling.core.scenario.Simulation;
 
 // import static io.gatling.core.CoreDsl.*;
